@@ -48,7 +48,7 @@ topology_template:
       capabilities:
         scalable:
           properties:
-            count: 1
+            count: 3
         host:
           properties:
             num_cpus: 1
