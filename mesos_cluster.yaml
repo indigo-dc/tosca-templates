@@ -47,8 +47,10 @@ topology_template:
         os:
           properties:
             type: linux
-            #distribution: ubuntu
-            #version: 14.04
+            distribution: ubuntu
+            version: 14.04
+            image: linux-ubuntu-14.04-vmi
+
 
     mesos_slave_server:
       type: tosca.nodes.indigo.Compute
@@ -63,8 +65,9 @@ topology_template:
         os:
           properties:
             type: linux
-            #distribution: ubuntu
-            #version: 14.04
+            distribution: ubuntu
+            version: 14.04
+            image: linux-ubuntu-14.04-vmi
             
     mesos_lb_server:
       type: tosca.nodes.indigo.Compute
@@ -82,9 +85,10 @@ topology_template:
         os:
           properties:
             type: linux
-            #distribution: ubuntu
-            #version: 14.04            
-
+            distribution: ubuntu
+            version: 14.04
+            image: linux-ubuntu-14.04-vmi
+            
   outputs:
     mesos_lb_ips:
       value: { get_attribute: [ mesos_lb_server, public_address ] }
