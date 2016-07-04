@@ -46,9 +46,9 @@ topology_template:
             mem_size: 2 GB
         os:
           properties:
-            type: linux
-            distribution: ubuntu
-            version: 14.04
+#            type: linux
+#            distribution: ubuntu
+#            version: 14.04
             image: linux-ubuntu-14.04-vmi
 
 
@@ -64,9 +64,9 @@ topology_template:
             mem_size: 1 GB
         os:
           properties:
-            type: linux
-            distribution: ubuntu
-            version: 14.04
+#            type: linux
+#            distribution: ubuntu
+#            version: 14.04
             image: linux-ubuntu-14.04-vmi
             
     mesos_lb_server:
@@ -84,9 +84,9 @@ topology_template:
             mem_size: 1 GB
         os:
           properties:
-            type: linux
-            distribution: ubuntu
-            version: 14.04
+#            type: linux
+#            distribution: ubuntu
+#            version: 14.04
             image: linux-ubuntu-14.04-vmi
             
   outputs:
