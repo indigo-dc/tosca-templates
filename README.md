@@ -11,3 +11,6 @@ The applications currently supported are:
 * galaxy.yaml: Deploy a [Galaxy](http://galaxyproject.org/) server configured to execute jobs locally.
 
 * powerfit.yaml: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
+
+* mesos_cluster.yaml: Deploy a [mesos](https://mesos.apache.org/) cluster. The cluster is composed by one master, three slaves and one load balancer.
+
