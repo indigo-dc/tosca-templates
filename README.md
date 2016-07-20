@@ -3,7 +3,7 @@ These are the TOSCA Templates Supporting the Use Cases for INDIGO-DataCloud.
 The applications currently supported are:
 
 * amber/ambertools.yaml: Deploy an instance that supports [AmberTools](http://ambermd.org).
-* amber/amber_job_*.yaml: Run the amber tool "[_sander_]" (https://github.com/indigo-dc/tosca-templates/blob/add_chronos_templates/amber/scripts/amber_run.sh#L39-L45)  through a Chronos job.
+* amber/amber_job_*.yaml: Run the amber tool [_sander_] (https://github.com/indigo-dc/tosca-templates/blob/add_chronos_templates/amber/scripts/amber_run.sh#L39-L45)  through a Chronos job.
 
 * disvis.yaml: Deploy an instance that supports [DisVis](https://github.com/haddocking/disvis.git).
 
