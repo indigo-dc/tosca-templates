@@ -77,7 +77,7 @@ topology_template:
       properties:
         schedule: 'R0/2015-12-25T17:22:00Z/PT1M'
         description: 'Execute Application'
-        command: 'cd $MESOS_SANDBOX && wget https://gist.githubusercontent.com/maricaantonacci/8f597b12e556e21f2428fd397d9b78a8/raw/1c74ffd7b49219dbe938e06597c9cb541635b05f/amber_run.sh && /bin/bash amber_run.sh'
+        command: 'cd $MESOS_SANDBOX && wget https://raw.githubusercontent.com/indigo-dc/tosca-templates/add_chronos_templates/amber/scripts/amber_run.sh && /bin/bash amber_run.sh'
         uris: { get_input: input_urls}
         retries: 3
         environment_variables:
