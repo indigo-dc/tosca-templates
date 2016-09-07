@@ -80,11 +80,7 @@ topology_template:
             mem_size: { get_input: fe_mem }
         os:
           properties:
-            # host Operating System image properties
-            type: linux 
-            #distribution: ubuntu
-            #version: 14.04
-            #image: one://onecloud.i3m.upv.es/256
+            image: linux-ubuntu-14.04-vmi
 
     wn_node:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Slurm
@@ -115,12 +111,7 @@ topology_template:
             mem_size: { get_input: wn_mem }
         os:
           properties:
-            # host Operating System image properties
-            type: linux 
-            #distribution: ubuntu
-            #version: 14.04
-            # Until the orchestrator can resolve the images use the URL
-            image: one://onecloud.i3m.upv.es/256
+            image: linux-ubuntu-14.04-vmi
 
   outputs:
     galaxy_url:
