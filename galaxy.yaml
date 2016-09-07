@@ -52,7 +52,7 @@ topology_template:
             type: linux
             distribution: centos
             version: 7
-            image: indigodatacloudapps/docker-galaxy
+            image: indigodatacloudapps/galaxy
 
   outputs:
     galaxy_url:
