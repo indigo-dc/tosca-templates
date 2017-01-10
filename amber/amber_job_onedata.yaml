@@ -67,16 +67,15 @@ topology_template:
   node_templates:
  
    
-    chronos_job1:
+    chronos_job:
       type: tosca.nodes.indigo.Container.Application.Docker.Chronos
       properties:
         schedule: 'R0/2015-12-25T17:22:00Z/PT1M'
         description: 'Execute Application'
-        command: 'cd $MESOS_SANDBOX && wget https://raw.githubusercontent.com/maricaantonacci/e-RSH/master/scripts/Lifewatch/lifewatch_run.sh && /bin/bash lifewatch_run.sh'
+        command: 'cd $MESOS_SANDBOX && wget https://raw.githubusercontent.com/indigo-dc/tosca-templates/master/amber/scripts/amber_run.sh && /bin/bash amber_run.sh'
         uris: []
         retries: 3
         environment_variables:
-          TEMP: 'TEMP_1'
           INPUT_ONEDATA_TOKEN: { get_input: input_onedata_token }
           OUTPUT_ONEDATA_TOKEN: { get_input: output_onedata_token }
           INPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
@@ -84,68 +83,16 @@ topology_template:
           INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
           INPUT_PATH: { get_input: input_path }
           OUTPUT_ONEDATA_SPACE: { get_input: output_onedata_space }
-          OUTPUT_PATH: 'OUTPUT_PATH_1'
+          OUTPUT_PATH: { get_input: output_path }
           OUTPUT_FILENAMES: { get_input: output_filenames }
       artifacts:
         image:
-          file: 'marica/barridocker-oneclient' #TO BE MOVED UNDER INDIGO-DC
+          file: indigodatacloudapps/ambertools-oneclient:latest
           type: tosca.artifacts.Deployment.Image.Container.Docker
       requirements:
         - host: docker_runtime
    
-    chronos_job2:
-      type: tosca.nodes.indigo.Container.Application.Docker.Chronos
-      properties:
-        schedule: 'R0/2015-12-25T17:22:00Z/PT1M'
-        description: 'Execute Application'
-        command: 'cd $MESOS_SANDBOX && wget https://raw.githubusercontent.com/maricaantonacci/e-RSH/master/scripts/Lifewatch/lifewatch_run.sh && /bin/bash lifewatch_run.sh'
-        uris: []
-        retries: 3
-        environment_variables:
-          TEMP: 'TEMP_2'
-          INPUT_ONEDATA_TOKEN: { get_input: input_onedata_token }
-          OUTPUT_ONEDATA_TOKEN: { get_input: output_onedata_token }
-          INPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
-          OUTPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
-          INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
-          INPUT_PATH: { get_input: input_path }
-          OUTPUT_ONEDATA_SPACE: { get_input: output_onedata_space }
-          OUTPUT_PATH: 'OUTPUT_PATH_2'
-          OUTPUT_FILENAMES: { get_input: output_filenames }
-      artifacts:
-        image:
-          file: 'marica/barridocker-oneclient' #TO BE MOVED UNDER INDIGO-DC
-          type: tosca.artifacts.Deployment.Image.Container.Docker
-      requirements:
-        - host: docker_runtime
       
-    chronos_job3:
-      type: tosca.nodes.indigo.Container.Application.Docker.Chronos
-      properties:
-        schedule: 'R0/2015-12-25T17:22:00Z/PT1M'
-        description: 'Execute Application'
-        command: 'cd $MESOS_SANDBOX && wget https://raw.githubusercontent.com/maricaantonacci/e-RSH/master/scripts/Lifewatch/lifewatch_run.sh && /bin/bash lifewatch_run.sh'
-        uris: []
-        retries: 3
-        environment_variables:
-          TEMP: 'TEMP_3'
-          INPUT_ONEDATA_TOKEN: { get_input: input_onedata_token }
-          OUTPUT_ONEDATA_TOKEN: { get_input: output_onedata_token }
-          INPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
-          OUTPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
-          INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
-          INPUT_PATH: { get_input: input_path }
-          OUTPUT_ONEDATA_SPACE: { get_input: output_onedata_space }
-          OUTPUT_PATH: 'OUTPUT_PATH_3'
-          OUTPUT_FILENAMES: { get_input: output_filenames }
-      artifacts:
-        image:
-          file: 'marica/barridocker-oneclient' #TO BE MOVED UNDER INDIGO-DC
-          type: tosca.artifacts.Deployment.Image.Container.Docker
-      requirements:
-        - host: docker_runtime
-   
-   
     docker_runtime:
       type: tosca.nodes.indigo.Container.Runtime.Docker
       capabilities:
