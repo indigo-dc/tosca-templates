@@ -8,6 +8,8 @@ INDIGO-DataCloud uses the [TOSCA Simple Profile in YAML Version 1.0](http://docs
 
 Further information on the aforementioned scenarios is available in the  public [deliverable D5.2](https://www.indigo-datacloud.eu/documents/design-document-and-work-plan-paas-architecture-d52).  
 
-If you come from a user community interested in INDIGO-DataCloud, be aware that there is no need to understand TOSCA to use the platform. You can be provided with high-level graphical user interfaces that abstract away all the details.
+If you come from a user community interested in INDIGO-DataCloud, be aware that there is no need to understand TOSCA to use the platform. You can be provided with high-level graphical user interfaces that abstract away all the details. Instead, this information is provided for advanced users that may be interested in understanding the underlying details of the platform.
 
-Instead, this information is provided for power users that may be interested in tinkering with the platform.
+The following documentation is currently available:
+
+* [A Brief Guide to TOSCA for INDIGO-DataCloud](tosca.md)

@@ -1,6 +1,6 @@
 #A Brief Guide to TOSCA for INDIGO-DataCloud
 
-This document provides a brief introduction to the usage of the [TOSCA Simple Profile in YAML Version 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/csprd01/TOSCA-Simple-Profile-YAML-v1.0-csprd01.html) standard for INDIGO-DataCloud by means of already existing examples of TOSCA templates that support different use cases. This document is not intended to be a comprehensive description of the TOSCA standard. Instead, it is meant to provide the information required to kick-start yourself into creating or modiying existing TOSCA templates
+This document provides a brief introduction to the usage of the [TOSCA Simple Profile in YAML Version 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/csprd01/TOSCA-Simple-Profile-YAML-v1.0-csprd01.html) standard for INDIGO-DataCloud by means of already existing examples of TOSCA templates that support different use cases. This document is not intended to be a comprehensive description of the TOSCA standard. Instead, it is meant to provide the information required to kick-start yourself into creating or modiying existing TOSCA templates.
 
 
 ### Preliminary Statements
@@ -11,8 +11,8 @@ This document provides a brief introduction to the usage of the [TOSCA Simple Pr
   * The [tosca-templates](https://github.com/indigo-dc/tosca-templates) GitHub repository, which contains the authoritative templates employed to support different use cases and deploy required infrastructure used by the PaaS (e.g. a Mesos cluster).
   * The [tosca-types/examples](https://github.com/indigo-dc/tosca-types/tree/master/examples) directory of the corresponding GitHub repository, which contains additional TOSCA templates used for examples, training, testing as well as incubating TOSCA templates for uses cases before they are assessed and, therefore, transitioned to the [tosca-templates] repository.
 * The very same TOSCA template should be employed to:
-  * deploy an application by spawning an instance of a Docker container out of a Docker image stored in Docker Hub on either a Cloud site managed via [OneDock](https://github.com/indigo-dc/onedock), in the case of [OpenNebula](https://opennebula.org/), and [nova-docker](https://github.com/indigo-dc/nova-docker) in the case of [OpenStack](https://www.openstack.org/), which both allow to natively deploy Docker containers, and,
-  * deploy an application by spawning a vanilla VM on a Cloud site and installing the application by means of the corresponding Ansible Role that defines how to install a particular application.
+  * Deploy an application by spawning an instance of a Docker container out of a Docker image available in Docker Hub on either a Cloud site managed via [OneDock](https://github.com/indigo-dc/onedock), in the case of [OpenNebula](https://opennebula.org/), and [nova-docker](https://github.com/indigo-dc/nova-docker) in the case of [OpenStack](https://www.openstack.org/), which both allow to natively deploy Docker containers (Docker images will have to be registered in the site), and,
+  * Deploy an application by spawning a vanilla VM or Docker container on a Cloud site and installing the application by means of the corresponding Ansible Role that defines how to install a particular application.
 
 
 ###Anatomy of a TOSCA Template to Deploy Customized Virtual Infrastructures
@@ -42,7 +42,7 @@ For this particular application, the **node_templates** section includes the fol
   * **host**: A certain amount of CPUs and memory size is expressed as requirements for the application.
   * **os**: A specific Operating System (OS) configuration is indicated as a preference for the application to be run on. In this case, a GNU/Linux Ubuntu 14.04 LTS is requested. In this case, a specific image tag is indicated as a user-defined preference on which to run the application. This is explained in the following section.
 
-* **outputs**: Information to be provided as output by the Orchestrator after deploying the customized virtual infrastructure specified in a TOSCA template. These is the information that can be requested:
+* **outputs**: Information to be provided as output by the Orchestrator after deploying the customized virtual infrastructure specified in a TOSCA template. This is the information that can be requested:
   * _public_address_: The public IP of a computing node.
   * _credential_: The private key to access a computing node. You will need a username, an IP and a private key to log into a computing node.
 
