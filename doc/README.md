@@ -13,3 +13,4 @@ If you come from a user community interested in INDIGO-DataCloud, be aware that 
 The following documentation is currently available:
 
 * [A Brief Guide to TOSCA for INDIGO-DataCloud](tosca.md)
+* [How to deploy a TOSCA Template in INDIGO-DataCloud](tosca-deploy.md)
