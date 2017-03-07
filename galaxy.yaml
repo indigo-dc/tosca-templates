@@ -28,9 +28,9 @@ topology_template:
     local_lrms:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Local
       requirements:
-        - host: galaxy_server
+        - host: galaxy-server
 
-    galaxy_server:
+    galaxy-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -56,4 +56,4 @@ topology_template:
 
   outputs:
     galaxy_url:
-      value: { concat: [ 'http://', get_attribute: [ galaxy_server, public_address, 0 ], '/galaxy' ] }
+      value: { concat: [ 'http://', get_attribute: [ galaxy-server, public_address, 0 ], '/galaxy' ] }

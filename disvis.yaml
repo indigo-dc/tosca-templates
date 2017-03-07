@@ -21,9 +21,9 @@ topology_template:
     disvis:
       type: tosca.nodes.indigo.Disvis
       requirements:
-        - host: disvis_server
+        - host: disvis-server
  
-    disvis_server:
+    disvis-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -46,6 +46,6 @@ topology_template:
 
   outputs:
     instance_ip:
-      value: { get_attribute: [ disvis_server, public_address, 0 ] }
+      value: { get_attribute: [ disvis-server, public_address, 0 ] }
     instance_creds:
-      value: { get_attribute: [ disvis_server, endpoint, credential, 0 ] }
+      value: { get_attribute: [ disvis-server, endpoint, credential, 0 ] }

@@ -19,29 +19,29 @@ topology_template:
       properties:
         marathon_password: test_pass
         chronos_password: test_pass
-        mysquid_host: { get_attribute: [ mesos_lb_server, public_address, 0 ] }
-        proxycache_host: { get_attribute: [ mesos_lb_server, public_address, 0 ] }
+        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
         iam_access_token: { get_input: iam_token }
       requirements:
-        - host: mesos_master_server
+        - host: mesos-master-server
 
     mesos_slave:
       type: tosca.nodes.indigo.MesosSlaveCms
       properties:
-        master_ips: { get_attribute: [ mesos_master_server, public_address ] }
-        mysquid_host: { get_attribute: [ mesos_lb_server, public_address, 0 ] }
-        proxycache_host: { get_attribute: [ mesos_lb_server, public_address, 0 ] }
+        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
       requirements:
-        - host: mesos_slave_server
+        - host: mesos-slave-server
         
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
-        master_ips: { get_attribute: [ mesos_master_server, public_address ] }
+        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
       requirements:
-        - host: mesos_lb_server        
+        - host: mesos-lb-server
 
-    mesos_master_server:
+    mesos-master-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -69,7 +69,7 @@ topology_template:
             image: linux-ubuntu-14.04-vmi
 
 
-    mesos_slave_server:
+    mesos-slave-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         scalable:
@@ -86,7 +86,7 @@ topology_template:
 #            version: 14.04
             image: linux-ubuntu-14.04-vmi
             
-    mesos_lb_server:
+    mesos-lb-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -108,7 +108,7 @@ topology_template:
             
   outputs:
     mesos_lb_ips:
-      value: { get_attribute: [ mesos_lb_server, public_address ] }
+      value: { get_attribute: [ mesos-lb-server, public_address ] }
     mesos_master_ips:
-      value: { get_attribute: [ mesos_master_server, public_address ] }
+      value: { get_attribute: [ mesos-master-server, public_address ] }
       
