@@ -93,6 +93,7 @@ topology_template:
             min_instances: 0
       requirements:
         - host: lrms-wn
+        - dependency: lrms_front_end
 
     galaxy_wn:
       type: tosca.nodes.indigo.GalaxyWN
