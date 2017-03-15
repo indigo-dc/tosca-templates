@@ -20,14 +20,14 @@ topology_template:
     mesos_slave:
       type: tosca.nodes.indigo.MesosSlave
       properties:
-        master_ips: { get_attribute: [ mesos_master_server, public_address ] }
+        master_ips: [ { get_attribute: [ mesos_master_server, public_address ] } ]
       requirements:
         - host: mesos_slave_server
         
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
-        master_ips: { get_attribute: [ mesos_master_server, public_address ] }
+        master_ips: [ { get_attribute: [ mesos_master_server, public_address ] } ]
       requirements:
         - host: mesos_lb_server        
 
