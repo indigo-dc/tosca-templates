@@ -1,4 +1,4 @@
-#How to deploy a TOSCA Template in INDIGO-DataCloud
+# How to deploy a TOSCA Template in INDIGO-DataCloud
 
 This document briefly describes how to deploy a TOSCA template in INDIGO-DataCloud. TOSCA templates in INDIGO-DataCloud are employed to: i) provide the architectural description of an application to be deployed on a Cloud site; ii) to describe jobs to be deployed on Chronos and iii) long-running services to be deployed on Marathon, both on an Apache Mesos cluster. This guide focuses exclusively on the first type of TOSCA templates.
 
@@ -12,7 +12,7 @@ If you want to have an overview of the services involved in the orchestration, t
 If you do not have a user account in the [IAM](https://github.com/indigo-dc/iam) service at https://iam-test.indigo-datacloud.eu/, proceed to register.
 There is further documentation on how to register in the [IAM GitBook](https://indigo-dc.gitbooks.io/iam/content/)
 
-##2. Obtaining an IAM Token
+## 2. Obtaining an IAM Token
 An IAM token is required to interact with the Orchestrator.
 
 There are different ways to obtain an IAM token.
@@ -34,7 +34,7 @@ curl -s -L -d client_id=7893d62e-bf8d-4a1b-81b4-a9e6b7afb192 -d client_secret=AL
 For further information on the scopes, please refer to the [IAM documentation](https://indigo-dc.gitbooks.io/iam/content/).
 
 
-##3. Deciding the Client-Side Tool to Use the Orchestrator
+## 3. Deciding the Client-Side Tool to Use the Orchestrator
 
 The Orchestrator supports a [REST API](https://indigo-dc.github.io/orchestrator/restdocs/) and, therefore, it can be used by many different client-side tools. The list of tools include, but is not restricted to, the following, shown in order of usability for the end-user:
 
@@ -46,7 +46,7 @@ The Orchestrator supports a [REST API](https://indigo-dc.github.io/orchestrator/
 
 If you just need to submit an existing TOSCA template in the [tosca-templates](https://github.com/indigo-dc/tosca-templates) GitHub repository to the Orchestrator, then using orchent should be enough and has the lowest learning curve. However, if you are planning to further interact with other PaaS core services, using Postman would be a more versatile tool.
 
-##4. Submitting a TOSCA Template with Orchent
+## 4. Submitting a TOSCA Template with Orchent
 
 For further information about installing and using Orchent to submit a TOSCA template, please refer to the [Orchent User Guide](https://indigo-dc.gitbooks.io/orchent/content/user.html).
 
@@ -54,7 +54,7 @@ The required computational resources described in the TOSCA template will be pro
 
 
 
-##5. Deploying on a Public Cloud
+## 5. Deploying on a Public Cloud
 INDIGO-DataCloud services can also be employed to deploy on public Clouds (such as [Amazon Web Services (AWS)](https://aws.amazon.com/) and [Microsoft Azure](https://azure.microsoft.com)).
 
 You can indicate a restriction in a TOSCA Template so that the resources are provisioned in a specific region of a public Cloud. This depends on the specific Cloud provider.

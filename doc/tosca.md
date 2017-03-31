@@ -1,4 +1,4 @@
-#A Brief Guide to TOSCA for INDIGO-DataCloud
+# A Brief Guide to TOSCA for INDIGO-DataCloud
 
 This document provides a brief introduction to the usage of the [TOSCA Simple Profile in YAML Version 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/csprd01/TOSCA-Simple-Profile-YAML-v1.0-csprd01.html) standard for INDIGO-DataCloud by means of already existing examples of TOSCA templates that support different use cases. This document is not intended to be a comprehensive description of the TOSCA standard. Instead, it is meant to provide the information required to kick-start yourself into creating or modiying existing TOSCA templates.
 
@@ -15,7 +15,7 @@ This document provides a brief introduction to the usage of the [TOSCA Simple Pr
   * Deploy an application by spawning a vanilla VM or Docker container on a Cloud site and installing the application by means of the corresponding Ansible Role that defines how to install a particular application.
 
 
-###Anatomy of a TOSCA Template to Deploy Customized Virtual Infrastructures
+### Anatomy of a TOSCA Template to Deploy Customized Virtual Infrastructures
 
 Let's dissect a sample TOSCA template used for one of the use cases that involves the [Kepler](https://kepler-project.org/) workflow management system. This use case involves deploying a computing resources (either a Docker container or a Virtual Machine) on a Cloud site that it is automatically configured to have the Kepler application installed. Users will connect to the provisioned computing node via VNC (other use cases may require Web access or SSH access).
 
