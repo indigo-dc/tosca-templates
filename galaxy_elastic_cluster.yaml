@@ -59,11 +59,11 @@ topology_template:
     lrms_front_end:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Slurm
       properties:
-        wn_ips: { get_attribute: [ lrms_wn, private_address ] }
+        wn_ips: { get_attribute: [ lrms-wn, private_address ] }
       requirements:
-        - host: lrms_server
+        - host: lrms-server
 
-    lrms_server:
+    lrms-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -85,21 +85,21 @@ topology_template:
     wn_node:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Slurm
       properties:
-        front_end_ip: { get_attribute: [ lrms_server, private_address, 0 ] }
+        front_end_ip: { get_attribute: [ lrms-server, private_address, 0 ] }
       capabilities:
         wn:
           properties:
             max_instances: { get_input: wn_num }
             min_instances: 0
       requirements:
-        - host: lrms_wn
+        - host: lrms-wn
 
     galaxy_wn:
       type: tosca.nodes.indigo.GalaxyWN
       requirements:
-        - host: lrms_wn
+        - host: lrms-wn
 
-    lrms_wn:
+    lrms-wn:
       type: tosca.nodes.indigo.Compute
       capabilities:
         scalable:
@@ -115,8 +115,8 @@ topology_template:
 
   outputs:
     galaxy_url:
-      value: { concat: [ 'http://', get_attribute: [ lrms_server, public_address, 0 ], '/galaxy' ] }
+      value: { concat: [ 'http://', get_attribute: [ lrms-server, public_address, 0 ], '/galaxy' ] }
     cluster_ip:
-      value: { get_attribute: [ lrms_server, public_address, 0 ] }
+      value: { get_attribute: [ lrms-server, public_address, 0 ] }
     cluster_creds:
-      value: { get_attribute: [ lrms_server, endpoint, credential, 0 ] }
+      value: { get_attribute: [ lrms-server, endpoint, credential, 0 ] }

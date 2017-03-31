@@ -21,9 +21,9 @@ topology_template:
     powerfit:
       type: tosca.nodes.indigo.Powerfit
       requirements:
-        - host: powerfit_server
+        - host: powerfit-server
  
-    powerfit_server:
+    powerfit-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -41,11 +41,11 @@ topology_template:
           properties:
             type: linux 
             distribution: ubuntu 
-            version: 14.04
+            version: 16.04
             image: indigodatacloudapps/powerfit
 
   outputs:
     instance_ip:
-      value: { get_attribute: [ powerfit_server, public_address, 0 ] }
+      value: { get_attribute: [ powerfit-server, public_address, 0 ] }
     instance_creds:
-      value: { get_attribute: [ powerfit_server, endpoint, credential, 0 ] }
+      value: { get_attribute: [ powerfit-server, endpoint, credential, 0 ] }
