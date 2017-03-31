@@ -1,4 +1,4 @@
-#TOSCA for INDIGO-DataCloud
+# TOSCA for INDIGO-DataCloud
 
 INDIGO-DataCloud uses the [TOSCA Simple Profile in YAML Version 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/csprd01/TOSCA-Simple-Profile-YAML-v1.0-csprd01.html) to perform the description of:
 
