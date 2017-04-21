@@ -1,0 +1,62 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+
+description: >
+  TOSCA example to specify a Chronos Job that runs a batch Kepler job
+
+topology_template:
+  inputs:
+    authorization_token:
+      type: string
+      description: the IAM authorization token
+      required: yes
+    config_json:
+      type: string
+      description: the JSON that will configure Ophidia ensemble analysis
+      required: yes
+    futuregateway_uri:
+      type: string
+      description: a full URI to a FutureGateway instance
+      required: yes
+    task_id:
+      type: string
+      description: the ID of the FutureGateway task
+      required: yes
+    cpus:
+      type: float
+      description: Amount of CPUs for this job
+      required: yes
+      default: 1.0
+    mem:
+      type: scalar-unit.size
+      description: Amount of Memory for this job
+      required: yes
+      default: 2 GB
+
+  node_templates:
+    chronos:
+      type: tosca.nodes.indigo.Container.Application.Docker.Chronos
+      properties:
+        command: echo $CONFIG_JSON > /home/indigo/ophidia/ensemble-visualization/phase1/config.json && /usr/local/Kepler-2.5/kepler.sh -runwf -nogui /usr/local/indigokepler/workflows/ophidia/ensemble-visualization/OphidiaEnsembleAnalysisVisualization.kar
+        retries: 3
+        environment_variables:
+          AUTHORIZATION_TOKEN: { get_input: authorization_token }
+          CONFIG_JSON: { get_input: config_json }
+          FUTUREGATEWAY_URI: { get_input: futuregateway_uri }
+          TASK_ID: { get_input: task_id }
+      artifacts:
+        image:
+          file: indigodatacloudapps/kepler-batch:1.1
+          type: tosca.artifacts.Deployment.Image.Container.Docker
+      requirements:
+        - host: runtime
+
+    runtime:
+      type: tosca.nodes.indigo.Container.Runtime.Docker
+      capabilities:
+        host:
+          properties:
+            num_cpus: { get_input: cpus }
+            mem_size: { get_input: mem }
