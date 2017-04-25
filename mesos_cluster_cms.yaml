@@ -8,8 +8,8 @@ description: TOSCA example for specifying a Mesos Cluster
 topology_template:
 
   inputs:
-    iam_token: 
-      type: string 
+    iam_token:
+      type: string
       default: "my_token"
 
   node_templates:
@@ -33,11 +33,12 @@ topology_template:
         proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
       requirements:
         - host: mesos-slave-server
-        
+
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
         master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        marathon_password: test_pass        
       requirements:
         - host: mesos-lb-server
 
@@ -85,7 +86,7 @@ topology_template:
 #            distribution: ubuntu
 #            version: 14.04
             image: linux-ubuntu-14.04-vmi
-            
+
     mesos-lb-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
@@ -105,10 +106,9 @@ topology_template:
 #            distribution: ubuntu
 #            version: 14.04
             image: linux-ubuntu-14.04-vmi
-            
+
   outputs:
     mesos_lb_ips:
       value: { get_attribute: [ mesos-lb-server, public_address ] }
     mesos_master_ips:
       value: { get_attribute: [ mesos-master-server, public_address ] }
-      
