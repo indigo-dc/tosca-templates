@@ -106,7 +106,7 @@ topology_template:
           OUTPUT_FILENAMES: { get_input: output_filenames }
       artifacts:
         image:
-          file: 'ferag/barridocker-oneclient' 
+          file: 'indigodatacloudapps/algaebloom-barridocker' 
           type: tosca.artifacts.Deployment.Image.Container.Docker
       requirements:
         - host: docker_runtime
