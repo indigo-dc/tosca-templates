@@ -12,27 +12,80 @@ topology_template:
       type: string
       default: "my_token"
 
+    iam_client_id:
+      type: string
+      default: "myclient_id"
+
+    iam_client_secret:
+      type: string
+      default: "myclient_secret"
+
+    cms_local_site:
+      type: string
+      default: "T3_IT_Opportunistic_pg"
+      
+    cms_stageoutsite:
+      type: string
+      default: "T1_IT_CNAF_Disk"
+      
+    cms_stageoutserver:
+      type: string
+      default: "storm-fe-cms.cr.cnaf.infn.it"
+
+    cms_stageoutprefix:
+      type: string
+      default: "srm://storm-fe-cms.cr.cnaf.infn.it:8444/srm/managerv2?SFN=/cmsdisk/"
+
+
   node_templates:
 
+
     mesos_master:
-      type: tosca.nodes.indigo.MesosMasterCms
+      type: tosca.nodes.indigo.MesosMaster
       properties:
         marathon_password: test_pass
         chronos_password: test_pass
-        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
-        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
-        iam_access_token: { get_input: iam_token }
       requirements:
         - host: mesos-master-server
 
-    mesos_slave:
-      type: tosca.nodes.indigo.MesosSlaveCms
+
+    cms_services:
+      type: tosca.nodes.indigo.CmsServices
       properties:
-        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        marathon_password: test_pass
         mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
         proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        iam_access_token: { get_input: iam_token }
+        iam_client_id: { get_input: iam_client_id }
+        iam_client_secret: { get_input: iam_client_secret }
+        cms_local_site: { get_input: cms_local_site }
+        cms_stageoutsite: { get_input: cms_stageoutsite }
+        cms_stageoutserver: { get_input: cms_stageoutserver }
+        cms_stageoutprefix: { get_input: cms_stageoutprefix }
+      requirements:
+        - host: mesos_master
+
+
+    mesos_slave:
+      type: tosca.nodes.indigo.MesosSlave
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, public_address, 0 ] }
       requirements:
         - host: mesos-slave-server
+
+    cms_wn:
+      type: tosca.nodes.indigo.CmsWnConfig
+      properties:
+        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        cms_local_site: { get_input: cms_local_site }
+        cms_stageoutsite: { get_input: cms_stageoutsite }
+        cms_stageoutserver: { get_input: cms_stageoutserver }
+        cms_stageoutprefix: { get_input: cms_stageoutprefix }
+      requirements:
+        - host: mesos_slave
+
 
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
@@ -54,7 +107,7 @@ topology_template:
                 source: 5050
               marathon_port:
                 protocol: tcp
-                source: 8443
+                source: 8080
         scalable:
           properties:
             count: 1
@@ -64,9 +117,6 @@ topology_template:
             mem_size: 4 GB
         os:
           properties:
-#            type: linux
-#            distribution: ubuntu
-#            version: 14.04
             image: linux-ubuntu-14.04-vmi
 
 
@@ -82,9 +132,6 @@ topology_template:
             mem_size: 4 GB
         os:
           properties:
-#            type: linux
-#            distribution: ubuntu
-#            version: 14.04
             image: linux-ubuntu-14.04-vmi
 
     mesos-lb-server:
@@ -102,9 +149,6 @@ topology_template:
             mem_size: 1 GB
         os:
           properties:
-#            type: linux
-#            distribution: ubuntu
-#            version: 14.04
             image: linux-ubuntu-14.04-vmi
 
   outputs:
