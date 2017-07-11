@@ -36,6 +36,25 @@ topology_template:
       type: string
       default: "srm://storm-fe-cms.cr.cnaf.infn.it:8444/srm/managerv2?SFN=/cmsdisk/"
 
+    cms_stageoutsite_fallback:
+      type: string
+      default: "DUMMY"
+         
+    cms_stageoutserver_fallback: 
+      type: string 
+      default: "DUMMY"
+
+    cms_stageoutprefix_fallback:
+      type: string 
+      default: "DUMMY"
+
+    monitordb_ip:
+      type: string 
+      default: "193.205.222.247:8080"
+    
+    elasticsearch_secret:
+      type: string
+      default: "5z0O87gnSf"
 
   node_templates:
 
@@ -45,6 +64,7 @@ topology_template:
       properties:
         marathon_password: test_pass
         chronos_password: test_pass
+        mesos_masters_list: { get_attribute: [ mesos-master-server, private_address ] }
       requirements:
         - host: mesos-master-server
 
@@ -53,15 +73,12 @@ topology_template:
       type: tosca.nodes.indigo.CmsServices
       properties:
         marathon_password: test_pass
-        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
-        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        mysquid_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
         iam_access_token: { get_input: iam_token }
         iam_client_id: { get_input: iam_client_id }
         iam_client_secret: { get_input: iam_client_secret }
         cms_local_site: { get_input: cms_local_site }
-        cms_stageoutsite: { get_input: cms_stageoutsite }
-        cms_stageoutserver: { get_input: cms_stageoutserver }
-        cms_stageoutprefix: { get_input: cms_stageoutprefix }
       requirements:
         - host: mesos_master
 
@@ -69,20 +86,25 @@ topology_template:
     mesos_slave:
       type: tosca.nodes.indigo.MesosSlave
       properties:
-        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
-        front_end_ip: { get_attribute: [ mesos-master-server, public_address, 0 ] }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, private_address, 0 ] }
       requirements:
         - host: mesos-slave-server
 
     cms_wn:
       type: tosca.nodes.indigo.CmsWnConfig
       properties:
-        mysquid_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
-        proxycache_host: { get_attribute: [ mesos-lb-server, public_address, 0 ] }
+        mysquid_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
         cms_local_site: { get_input: cms_local_site }
         cms_stageoutsite: { get_input: cms_stageoutsite }
         cms_stageoutserver: { get_input: cms_stageoutserver }
         cms_stageoutprefix: { get_input: cms_stageoutprefix }
+        cms_stageoutsite_fallback: { get_input: cms_stageoutsite_fallback }
+        cms_stageoutserver_fallback: { get_input: cms_stageoutserver_fallback }
+        cms_stageoutprefix_fallback: { get_input: cms_stageoutprefix_fallback }
+        monitordb_ip: { get_input: monitordb_ip }
+        elasticsearch_secret: { get_input: elasticsearch_secret }
       requirements:
         - host: mesos_slave
 
@@ -90,7 +112,7 @@ topology_template:
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
-        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
         marathon_password: test_pass        
       requirements:
         - host: mesos-lb-server
@@ -101,6 +123,7 @@ topology_template:
         endpoint:
           properties:
             network_name: PUBLIC
+            dns_name: mesosserverpublic
             ports:
               mesos_port:
                 protocol: tcp
@@ -113,8 +136,8 @@ topology_template:
             count: 1
         host:
           properties:
-            num_cpus: 2
-            mem_size: 4 GB
+            num_cpus: 4
+            mem_size: 8 GB
         os:
           properties:
             image: linux-ubuntu-14.04-vmi
@@ -140,19 +163,23 @@ topology_template:
         endpoint:
           properties:
             network_name: PUBLIC
+            dns_name: mesoslb
         scalable:
           properties:
             count: 1
         host:
           properties:
-            num_cpus: 1
-            mem_size: 1 GB
+            num_cpus: 2
+            mem_size: 2 GB
         os:
           properties:
             image: linux-ubuntu-14.04-vmi
 
   outputs:
-    mesos_lb_ips:
+    mesos_lb_ip:
       value: { get_attribute: [ mesos-lb-server, public_address ] }
-    mesos_master_ips:
-      value: { get_attribute: [ mesos-master-server, public_address ] }
+    mesos_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos_master_server, public_address, 0 ], ':5050' ] }
+    marathon_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos_master_server, public_address, 0 ], ':8080' ] }
+
