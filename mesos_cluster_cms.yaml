@@ -179,7 +179,7 @@ topology_template:
     mesos_lb_ip:
       value: { get_attribute: [ mesos-lb-server, public_address ] }
     mesos_endpoint:
-      value: { concat: [ 'http://', get_attribute: [ mesos_master_server, public_address, 0 ], ':5050' ] }
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':5050' ] }
     marathon_endpoint:
-      value: { concat: [ 'http://', get_attribute: [ mesos_master_server, public_address, 0 ], ':8080' ] }
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8080' ] }
 
