@@ -7,28 +7,72 @@ description: TOSCA example for specifying a Mesos Cluster
 
 topology_template:
 
+  inputs:
+    marathon_password:
+      type: string
+      description: Admin password for accessing Marathon HTTP service
+      default: 's3cret'
+      required: yes
+
+    chronos_password:
+      type: string
+      description: Admin password for accessing Chronos HTTP service
+      default: 's3cret'
+      required: yes
+
+    slave_num:
+      type: integer
+      description: Number of slave nodes in the cluster
+      default: 2
+      required: yes
+
+    slave_cpus:
+      type: integer
+      description: Numer of CPUs for the slave node
+      default: 1
+      required: yes
+
+    slave_mem:
+      type: scalar-unit.size
+      description: Amount of Memory for the slave node
+      default: 2 GB
+      required: yes
+
+    master_cpus:
+      type: integer
+      description: Numer of CPUs for the master node
+      default: 2
+      required: yes
+
+    master_mem:
+      type: scalar-unit.size
+      description: Amount of Memory for the master node
+      default: 4 GB
+      required: yes
+
   node_templates:
 
     mesos_master:
       type: tosca.nodes.indigo.MesosMaster
       properties:
-        marathon_password: test_pass
-        chronos_password: test_pass
+        marathon_password: { get_input: marathon_password }
+        chronos_password: { get_input: chronos_password }
       requirements:
         - host: mesos-master-server
 
     mesos_slave:
       type: tosca.nodes.indigo.MesosSlave
       properties:
-        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, private_address, 0 ] }
       requirements:
         - host: mesos-slave-server
 
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
-        master_ips: { get_attribute: [ mesos-master-server, public_address ] }
-        marathon_password: test_pass        
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        marathon_password: { get_input: marathon_password }       
       requirements:
         - host: mesos-lb-server
 
@@ -38,13 +82,24 @@ topology_template:
         endpoint:
           properties:
             network_name: PUBLIC
+            dns_name: mesosserverpublic
+            ports:
+              mesos_port:
+                protocol: tcp
+                source: 5050
+              marathon_port:
+                protocol: tcp
+                source: 8443
+              chronos_port:
+                protocol: tcp
+                source: 4443
         scalable:
           properties:
             count: 1
         host:
           properties:
-            num_cpus: 2
-            mem_size: 2 GB
+            num_cpus: { get_input: master_cpus }
+            mem_size: { get_input: master_mem }
         os:
           properties:
 #            type: linux
@@ -58,11 +113,11 @@ topology_template:
       capabilities:
         scalable:
           properties:
-            count: 3
+            count: { get_input: slave_num }
         host:
           properties:
-            num_cpus: 1
-            mem_size: 1 GB
+            num_cpus: { get_input: slave_cpus }
+            mem_size: { get_input: slave_mem }
         os:
           properties:
 #            type: linux
@@ -76,13 +131,17 @@ topology_template:
         endpoint:
           properties:
             network_name: PUBLIC
+            ports:
+              all_tcp:
+                protocol: tcp
+                source_range: [ 1, 65535 ]
         scalable:
           properties:
             count: 1
         host:
           properties:
             num_cpus: 1
-            mem_size: 1 GB
+            mem_size: 2 GB
         os:
           properties:
 #            type: linux
