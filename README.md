@@ -16,3 +16,4 @@ The applications currently supported are:
  
 * powerfit.yaml: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
 
+* eubiosteo-server.yaml: Deploy an elastic batch queue using [clues] for the use case of medical imaging biomarkers.
