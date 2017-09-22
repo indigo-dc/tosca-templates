@@ -85,9 +85,8 @@ topology_template:
     chronos_job1:
       type: tosca.nodes.indigo.Container.Application.Docker.Chronos
       properties:
-        schedule: 'code'
         description: 'Execute Application'
-        command: 'Script to run'
+        command: 'cd $MESOS_SANDBOX && wget  https://raw.githubusercontent.com/indigo-dc/algaebloom-barridocker/master/lifewatch_run.sh && /bin/bash lifewatch_run.sh'
         uris: []
         retries: 3
         environment_variables:
@@ -96,7 +95,7 @@ topology_template:
           OUTPUT_ONEDATA_TOKEN: { get_input: output_onedata_token }
           D3D_PARAM: { get_input: d3d_param }
           INPUT_CONFIG_FILE: { get_input: input_config_file }
-          D3D_BIN: 'bin_path'
+          D3D_BIN: '/delft3d_repository'
           INPUT_ONEDATA_PROVIDERS: { get_input: input_onedata_providers }
           OUTPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
           INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
@@ -119,3 +118,4 @@ topology_template:
           properties:
             num_cpus: { get_input: cpus }
             mem_size: { get_input: mem }
+            volumes: [ '/data:rw' ]
