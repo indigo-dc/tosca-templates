@@ -44,8 +44,8 @@ topology_template:
           properties:
             type: linux
             distribution: ubuntu
-            version: 14.04
-            image: indigodatacloudapps/kepler
+            version: 16.04
+            image: indigodatacloudapps/kepler:1.3
 
   outputs:
     instance_ip:
