@@ -33,6 +33,12 @@ topology_template:
       required: no
       default: 1024
 
+    cache_image:
+      type: string
+      description: docker image for cache container
+      required: no
+      default: 'redis'
+
     db_cpus:
       type: float
       description: Number of CPUs for DB (postgres) container
@@ -44,6 +50,12 @@ topology_template:
       description: RAM in MB for DB container
       required: no
       default: 1024
+
+    db_image:
+      type: string
+      description: docker image for DB container
+      required: no
+      default: 'postgres'
 
     es_cpus:
       type: float
@@ -57,6 +69,12 @@ topology_template:
       required: no
       default: 1024
 
+    es_image:
+      type: string
+      description: docker image for elasticsearch container
+      required: no
+      default: 'indigodatacloudapps/dariah-repository:elasticsearch'
+
     mq_cpus:
       type: float
       description: Number of CPUs for rabbitmq container
@@ -68,6 +86,12 @@ topology_template:
       description: RAM in MB for rabbitmq container
       required: no
       default: 1024
+
+    mq_image:
+      type: string
+      description: docker image for rabbitmq container
+      required: no
+      default: 'rabbitmq:3-management'
 
     statsd_cpus:
       type: float
@@ -81,6 +105,12 @@ topology_template:
       required: no
       default: 1024
 
+    statsd_image:
+      type: string
+      description: docker image for statsd container
+      required: no
+      default: 'indigodatacloudapps/dariah-repository:statsd'
+
     web_cpus:
       type: float
       description: Number of CPUs for web container
@@ -93,6 +123,12 @@ topology_template:
       required: no
       default: 1024
 
+    web_image:
+      type: string
+      description: docker image for web container
+      required: no
+      default: 'indigodatacloudapps/dariah-repository:web'
+
     worker_cpus:
       type: float
       description: Number of CPUs for celery worker container
@@ -104,6 +140,12 @@ topology_template:
       description: RAM in MB for celery worker container
       required: no
       default: 1024
+
+    worker_image:
+      type: string
+      description: docker image for celery worker container
+      required: no
+      default: 'indigodatacloudapps/dariah-repository:web'
 
     slave_num:
       type: integer
@@ -144,18 +186,25 @@ topology_template:
         marathon_password: { get_input: marathon_password }
         cache_cpus: { get_input: cache_cpus }
         cache_mem: { get_input: cache_mem }
+        cache_image: { get_input: cache_image }
         db_cpus: { get_input: db_cpus }
         db_mem: { get_input: db_mem }
+        db_image: { get_input: db_image }
         es_cpus: { get_input: es_cpus }
         es_mem: { get_input: es_mem }
+        es_image: { get_input: es_image }
         mq_cpus: { get_input: mq_cpus }
         mq_mem: { get_input: mq_mem }
+        mq_image: { get_input: mq_image }
         statsd_cpus: { get_input: statsd_cpus }
         statsd_mem: { get_input: statsd_mem }
+        statsd_image: { get_input: statsd_image }
         web_cpus: { get_input: web_cpus }
         web_mem: { get_input: web_mem }
+        web_image: { get_input: web_image }
         worker_cpus: { get_input: worker_cpus }
         worker_mem: { get_input: worker_mem }
+        worker_image: { get_input: worker_image }
       requirements:
         - host: mesos_master
 
