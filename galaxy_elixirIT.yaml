@@ -88,7 +88,7 @@ topology_template:
     refdata_provider_type:
       type: string
       description: Select Reference data provider type (Onedata, CernVM-FS or download)
-      default: 'onedata'
+      default: 'cvmfs'
     refdata_provider:
       type: string
       description: Oneprovider for reference data
