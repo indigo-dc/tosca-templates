@@ -88,7 +88,7 @@ topology_template:
     refdata_provider_type:
       type: string
       description: Select Reference data provider type (Onedata, CernVM-FS or download)
-      default: 'cvmfs'
+      default: 'onedata'
     refdata_provider:
       type: string
       description: Oneprovider for reference data
@@ -142,6 +142,7 @@ topology_template:
       properties:
         flavor: { get_input: flavor }
         admin_api_key: { get_input: admin_api_key }
+        version: { get_input: version }
       requirements:
         - host: galaxy
 
