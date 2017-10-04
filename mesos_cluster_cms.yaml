@@ -121,8 +121,8 @@ topology_template:
         cms_stageoutsite_fallback: { get_input: cms_stageoutsite_fallback }
         cms_stageoutserver_fallback: { get_input: cms_stageoutserver_fallback }
         cms_stageoutprefix_fallback: { get_input: cms_stageoutprefix_fallback }
-        onedatatoken: { get_input: onedatatoken }
-        onedatacache: { get_input: onedatacache }
+        cms_input_protocol: { get_input: cms_input_protocol }
+        cms_input_path: { get_input: cms_input_path }
         monitordb_ip: { get_input: monitordb_ip }
         elasticsearch_secret: { get_input: elasticsearch_secret }
       requirements:
