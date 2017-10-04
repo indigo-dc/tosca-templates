@@ -68,7 +68,7 @@ topology_template:
     export_dir:
       type: string
       description: path to store galaxy data
-      default: /home/export
+      default: /export
 
     flavor:
       type: string
@@ -82,7 +82,7 @@ topology_template:
     refdata_dir:
       type: string
       description: path to store galaxy reference data
-      default: /home/refdata
+      default: /refdata
     refdata_repository_name:
       type: string
       description: Onedata space name, CernVM-FS repository name or subdirectory downaload name
@@ -90,7 +90,7 @@ topology_template:
     refdata_provider_type:
       type: string
       description: Select Reference data provider type (Onedata, CernVM-FS or download)
-      default: 'onedata'
+      default: 'cvmfs'
     refdata_provider:
       type: string
       description: Oneprovider for reference data
@@ -152,6 +152,7 @@ topology_template:
       properties:
         flavor: { get_input: flavor }
         admin_api_key: { get_input: admin_api_key }
+        version: { get_input: version }
       requirements:
         - host: galaxy_portal
 
@@ -238,7 +239,19 @@ topology_template:
         - host: lrms_wn
 
     galaxy_wn:
-      type: tosca.nodes.indigo.GalaxyWN
+      type: tosca.nodes.indigo.GalaxyWnCvmfsReferenceData
+      properties:
+        export_dir: { get_input: export_dir }
+        front_end_ip: { get_attribute: [ lrms_server, private_address, 0 ] }
+        flavor: { get_input: flavor }
+        version: { get_input: version }
+        reference_data: { get_input: reference_data }
+        refdata_cvmfs_server_url: { get_input: refdata_cvmfs_server_url }
+        refdata_cvmfs_repository_name: { get_input: refdata_cvmfs_repository_name }
+        refdata_cvmfs_key_file: { get_input: refdata_cvmfs_key_file }
+        refdata_cvmfs_proxy_url: { get_input: refdata_cvmfs_proxy_url }
+        refdata_cvmfs_proxy_port: { get_input: refdata_cvmfs_proxy_port }
+        refdata_dir: { get_input: refdata_dir }
       requirements:
         - host: lrms_wn
 

@@ -142,6 +142,7 @@ topology_template:
       properties:
         flavor: { get_input: flavor }
         admin_api_key: { get_input: admin_api_key }
+        version: { get_input: version }
       requirements:
         - host: galaxy
 
