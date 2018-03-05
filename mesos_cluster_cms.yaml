@@ -71,6 +71,42 @@ topology_template:
     elasticsearch_secret:
       type: string
       default: "5z0O87gnSf"
+    
+    cms_xrd_readserver:
+      type: string
+      default: "DUMMY"
+
+    cms_xrd_cache_redir:
+      type: string
+      default: "0.0.0.0"
+
+    cms_cmsd_cache_redir_port:
+      type: string
+      default: "1213"
+
+    cms_xrd_cache_redir_port:
+      type: string
+      default: "1094"  
+
+    cms_redir_global:
+      type: string
+      default: "0.0.0.0"
+
+    cms_redir_global_port:
+      type: string
+      default: "1213"
+
+    gist_token:
+      type: string
+      default: "DUMMY"
+
+    cms_cert_url:
+      type: string
+      default: "DUMMY"
+
+    cms_key_url:
+      type: string
+      default: "DUMMY"
 
   node_templates:
 
@@ -97,6 +133,15 @@ topology_template:
         cms_local_site: { get_input: cms_local_site }
         oneclient_token: { get_input: onedatatoken }
         oneprovider_name: { get_input: onedatacache }
+        marathon_username: { get_param: marathon_username  } 
+        marathon_password: { get_param: marathon_password  }
+        zookeeper_host_list: { get_attr: [mesos_masters, mesos_server_ip] }
+        proxy_cache_manager: { get_param: cms_proxycache_token_manager }
+        cms_xrd_cache_redir: { get_param: cms_xrd_cache_redir }
+        cms_cmsd_cache_redir_port: { get_param: cms_cmsd_cache_redir_port }
+        cms_xrd_cache_redir_port: { get_param: cms_xrd_cache_redir_port }
+        cms_redir_global: { get_param: cms_redir_global }
+        cms_redir_global_port: { get_param: cms_redir_global_port }
       requirements:
         - host: mesos_master
 
