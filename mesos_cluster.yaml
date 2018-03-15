@@ -57,6 +57,7 @@ topology_template:
       properties:
         marathon_password: { get_input: marathon_password }
         chronos_password: { get_input: chronos_password }
+        mesos_masters_list: { get_attribute: [ HOST, public_address ] }
       requirements:
         - host: mesos-master-server
 
