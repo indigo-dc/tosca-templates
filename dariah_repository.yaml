@@ -214,6 +214,7 @@ topology_template:
         marathon_password: { get_input: marathon_password }
         enable_chronos: false
         wn_ips: { get_attribute: [ mesos_slave_server, public_address ] }
+        mesos_masters_list: { get_attribute: [ HOST, public_address ] }
         enable_nfs_share: true
       requirements:
         - host: mesos_master_server
