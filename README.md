@@ -17,3 +17,5 @@ The applications currently supported are:
  
 * powerfit.yaml: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
 
+* dodas/*.yaml: Deploy an HTCondor cluster on Mesos (DODAS) 
+
