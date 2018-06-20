@@ -3,20 +3,11 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/ams_config/custom_types.yaml 
 
-description: TOSCA example for specifying a Mesos Cluster with condor
+description: TOSCA example for specifying a Mesos Cluster with a containerized HTCondor batch system 
 
 topology_template:
 
   inputs:
-
-    network:
-      type: string
-      default: "af6e0156-87e4-4ad4-93ac-a82c9b6d3a6f"
-
-    availability_zone:
-      type: string
-      default: "nova"
-      #default: "nova"
 
     marathon_username:
       type: string
@@ -56,7 +47,7 @@ topology_template:
 
     server_image: 
       type: string
-      default: "Ubuntu 16.04 ASI distbuilder"
+      default: "Ubuntu_16.04"
 
   node_templates:
 
@@ -141,7 +132,7 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            network_name: 4faaa5d2-1c3d-486b-ade9-66fbaea36e43.PRIVATE
+            network_name: PRIVATE
         scalable:
           properties:
             count: 2
@@ -151,14 +142,14 @@ topology_template:
             mem_size: 8 GB
         os:
           properties:
-            image: ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f
+            image: { get_input: server_image }
 
     mesos-slaveschedd-server:
      type: tosca.nodes.indigo.Compute
      capabilities:
         endpoint:
           properties:
-            network_name: 4faaa5d2-1c3d-486b-ade9-66fbaea36e43.PRIVATE
+            network_name: PRIVATE
         scalable:
           properties:
             count: 1
@@ -168,7 +159,7 @@ topology_template:
             mem_size: 8 GB
         os:
           properties:
-            image: ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f
+            image: { get_input: server_image }
 
     mesos-lb-server:
       type: tosca.nodes.indigo.Compute
@@ -186,7 +177,7 @@ topology_template:
             mem_size: 8 GB
         os:
           properties:
-            image: ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f
+            image: { get_input: server_image }
 
   outputs:
     mesos_lb_ip:

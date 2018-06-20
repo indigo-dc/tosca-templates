@@ -1,0 +1,230 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+
+description: TOSCA template for a complete CMS Site over Mesos orchestrator
+
+topology_template:
+
+  inputs:
+
+#  Marathon and Mesos related configuration parameters
+    marathon_username:
+      type: string
+      default: "Marathon-user"
+
+    marathon_password:
+      type: string
+      default: "Marathon-passwd"
+
+    mesos_username:
+      type: string
+      default: "Mesos-user"
+
+    mesos_password:
+      type: string
+      default: "Mesos-passwd"
+
+    number_of_masters:
+      type: integer
+      default: 1
+
+    num_cpus_master: 
+      type: integer
+      default: 2
+
+    mem_size_master:
+      type: string
+      default: "4 GB"
+
+    number_of_slaves:
+      type: integer
+      default: 4
+
+    num_cpus_slave: 
+      type: integer
+      default: 4
+
+    mem_size_slave:
+      type: string
+      default: "8 GB"
+
+    number_of_lbs:
+      type: integer
+      default: 1
+
+    num_cpus_lb: 
+      type: integer
+      default: 2
+
+    mem_size_lb:
+      type: string
+      default: "2 GB"
+
+    server_image:
+      type: string
+      default: "ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f"
+#      default: "ost://cloud.recas.ba.infn.it/1113d7e8-fc5d-43b9-8d26-61906d89d479"
+
+####
+# IAM related configurations to enable the OIDC to X.509 certificate translation
+    iam_token:
+      type: string
+      default: "DODAS-IAM.Token"
+
+    iam_client_id:
+      type: string
+      default: "IAM-Client-ID"
+
+    iam_client_secret:
+      type: string
+      default: "IAM-Client-Secret"
+
+# CMS specific configurations 
+    cms_local_site:
+      type: string
+      default: "T3_IT_Opportunistic_dodas"
+      
+    cms_stageoutsite:
+      type: string
+      default: "T1_IT_CNAF"
+      
+    cms_stageoutprotocol:
+      type: string
+      default: "srmv2"
+
+# DODAS-Monitoring specific params (NOTE this is optional)
+    monitordb_ip:
+      type: string 
+      default: "ES-Endpoint"
+ 
+    elasticsearch_secret:
+      type: string
+      default: "ES-secret"
+ 
+  node_templates:
+
+    mesos_master:
+      type: tosca.nodes.indigo.MesosMaster
+      properties:
+        mesos_username: { get_input: mesos_username }
+        mesos_password: { get_input: mesos_password }
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+        mesos_masters_list: { get_attribute: [ mesos-master-server, private_address ] }
+      requirements:
+        - host: mesos-master-server
+
+    cms_services:
+      type: tosca.nodes.indigo.CmsServices
+      properties:
+        marathon_password: { get_input: marathon_password }
+        marathon_username: { get_input: marathon_username }
+        mysquid_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        iam_access_token: { get_input: iam_token }
+        iam_client_id: { get_input: iam_client_id }
+        iam_client_secret: { get_input: iam_client_secret }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        cms_local_site: { get_input: cms_local_site }
+      requirements:
+        - host: mesos_master
+
+    mesos_slave:
+      type: tosca.nodes.indigo.MesosSlave
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, private_address, 0 ] }
+      requirements:
+        - host: mesos-slave-server
+
+    cms_wn:
+      type: tosca.nodes.indigo.CmsWnConfig
+      properties:
+        mysquid_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        cms_local_site: { get_input: cms_local_site }
+        cms_stageoutsite: { get_input: cms_stageoutsite }
+        cms_stageoutprotocol: { get_input: cms_stageoutprotocol }
+        monitordb_ip: { get_input: monitordb_ip }
+        elasticsearch_secret: { get_input: elasticsearch_secret }
+      requirements:
+        - host: mesos_slave
+
+
+    mesos_load_balancer:
+      type: tosca.nodes.indigo.MesosLoadBalancer
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+      requirements:
+        - host: mesos-lb-server
+
+    mesos-master-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+            dns_name: mesosserverpublic
+            ports:
+              mesos_port:
+                protocol: tcp
+                source: 5050
+              marathon_port:
+                protocol: tcp
+                source: 8080
+        scalable:
+          properties:
+            count: { get_input: number_of_masters }
+        host:
+          properties:
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    mesos-slave-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        scalable:
+          properties:
+            count: { get_input: number_of_slaves }
+        host:
+          properties:
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+
+    mesos-lb-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+            dns_name: mesoslb
+        scalable:
+          properties:
+            count: { get_input: number_of_lbs }
+        host:
+          properties:
+            num_cpus: { get_input: num_cpus_lb }
+            mem_size: { get_input: mem_size_lb } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+  outputs:
+    mesos_lb_ip:
+      value: { get_attribute: [ mesos-lb-server, public_address ] }
+    mesos_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':5050' ] }
+    marathon_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8080' ] }
+
