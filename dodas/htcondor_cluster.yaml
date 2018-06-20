@@ -1,0 +1,188 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/ams_config/custom_types.yaml 
+
+description: TOSCA example for specifying a Mesos Cluster with a containerized HTCondor batch system 
+
+topology_template:
+
+  inputs:
+
+    marathon_username:
+      type: string
+      default: "admin"
+
+    marathon_password:
+      type: string
+      default: "passwd"
+
+    number_of_slaves:
+      type: integer
+      default: 2
+
+    number_of_masters:
+      type: integer
+      default: 1
+
+    number_of_wn_instances:
+      type: integer
+      default: 1
+  
+    cpu_x_wn:
+      type: float
+      default: 1.0
+
+    ram_x_wn:
+      type: float
+      default: 4000.0
+
+    docker_cpu_x_wn:
+      type: float
+      default: 0.95
+
+    docker_ram_x_wn:
+      type: float
+      default: 3998.95
+
+    server_image: 
+      type: string
+      default: "Ubuntu_16.04"
+
+  node_templates:
+
+    mesos_master:
+      type: tosca.nodes.indigo.MesosMaster
+      properties:
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+        chronos_password: test_pass
+        mesos_masters_list: { get_attribute: [ mesos-master-server, private_address ] }
+      requirements:
+        - host: mesos-master-server
+    
+    mesos_slave:
+      type: tosca.nodes.indigo.MesosSlave
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, private_address, 0 ] }
+      requirements:
+        - host: mesos-slave-server
+        - host: mesos-slaveschedd-server
+    
+    mesos_slaveschedd:
+      type: tosca.nodes.indigo.MesosSlave
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        front_end_ip: { get_attribute: [ mesos-master-server, private_address, 0 ] }
+      requirements:
+        - host: mesos-slaveschedd-server
+
+    mesos_load_balancer:
+      type: tosca.nodes.indigo.MesosLoadBalancer
+      properties:
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        marathon_password: { get_input: marathon_password }        
+      requirements:
+        - host: mesos-lb-server
+
+    htcondor_services:
+      type: tosca.nodes.indigo.HTCondorServices
+      properties:        
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        lb_ips: { get_attribute: [ mesos-lb-server, public_address ] }
+        htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
+        config_mode: "master"
+      requirements:
+        - host: mesos_master
+        - host: mesos_slave
+        - host: mesos-lb-server
+        - host: mesos_slaveschedd
+    
+    ##
+    # Resource section
+    # Numer of instances and image parameters
+    mesos-master-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+            dns_name: mesosserverpublic
+            ports:
+              mesos_port:
+                protocol: tcp
+                source: 5050
+              marathon_port:
+                protocol: tcp
+                source: 8080
+        scalable:
+          properties:
+            count: 1
+        host:
+          properties:
+            num_cpus: 4
+            mem_size: 8 GB
+        os:
+          properties:
+            image: ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f
+
+    mesos-slave-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PRIVATE
+        scalable:
+          properties:
+            count: 2
+        host:
+          properties:
+            num_cpus: 4
+            mem_size: 8 GB
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    mesos-slaveschedd-server:
+     type: tosca.nodes.indigo.Compute
+     capabilities:
+        endpoint:
+          properties:
+            network_name: PRIVATE
+        scalable:
+          properties:
+            count: 1
+        host:
+          properties:
+            num_cpus: 4
+            mem_size: 8 GB
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    mesos-lb-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+            dns_name: mesoslb
+        scalable:
+          properties:
+            count: 2
+        host:
+          properties:
+            num_cpus: 4
+            mem_size: 8 GB
+        os:
+          properties:
+            image: { get_input: server_image }
+
+  outputs:
+    mesos_lb_ip:
+      value: { get_attribute: [ mesos-lb-server, public_address ] }
+    mesos_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':5050' ] }
+    marathon_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8080' ] }
