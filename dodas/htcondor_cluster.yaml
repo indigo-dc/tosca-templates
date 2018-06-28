@@ -19,7 +19,7 @@ topology_template:
 
     number_of_slaves:
       type: integer
-      default: 2
+      default: 1
 
     number_of_masters:
       type: integer
@@ -47,6 +47,7 @@ topology_template:
 
     server_image: 
       type: string
+#      default: "ost://cloud.recas.ba.infn.it/1113d7e8-fc5d-43b9-8d26-61906d89d479" 
       default: "Ubuntu_16.04"
 
   node_templates:
@@ -85,6 +86,17 @@ topology_template:
         marathon_password: { get_input: marathon_password }        
       requirements:
         - host: mesos-lb-server
+        - dependency: mesos_master
+
+    htcondor_services:
+      type: tosca.nodes.indigo.HTCondorServices
+      properties:        
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        lb_ips: { get_attribute: [ mesos-lb-server, public_address ] }
+        htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
+        config_mode: "master"
+      requirements:
+        - host: mesos_master
 
     htcondor_services:
       type: tosca.nodes.indigo.HTCondorServices
@@ -125,21 +137,18 @@ topology_template:
             mem_size: 8 GB
         os:
           properties:
-            image: ost://horizon.cloud.cnaf.infn.it/0b18691b-2c67-4800-876e-60802024c64f
+            image: { get_input: server_image }
 
     mesos-slave-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
-        endpoint:
-          properties:
-            network_name: PRIVATE
         scalable:
           properties:
-            count: 2
+            count: 1
         host:
           properties:
-            num_cpus: 4
-            mem_size: 8 GB
+            num_cpus: 2
+            mem_size: 4 GB
         os:
           properties:
             image: { get_input: server_image }
@@ -147,9 +156,6 @@ topology_template:
     mesos-slaveschedd-server:
      type: tosca.nodes.indigo.Compute
      capabilities:
-        endpoint:
-          properties:
-            network_name: PRIVATE
         scalable:
           properties:
             count: 1
@@ -170,11 +176,11 @@ topology_template:
             dns_name: mesoslb
         scalable:
           properties:
-            count: 2
+            count: 1
         host:
           properties:
-            num_cpus: 4
-            mem_size: 8 GB
+            num_cpus: 2
+            mem_size: 4 GB
         os:
           properties:
             image: { get_input: server_image }

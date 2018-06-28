@@ -75,8 +75,28 @@ topology_template:
 
     cms_local_site:
       type: string
-      default: "T3_IT_Opportunistic_hnsci"
+      default: "T3_XX_Opportunistic_KK"
       
+    cms_input_path:
+      type: string
+      default: "/OTC-INFN/cms/disk/"
+
+    cms_input_protocol:
+      type: string
+      default: "onedata"
+
+    oneclient_pkg:
+      type: string
+      default: "oneclient=18.02.0.rc4-1" 
+
+    oneclient_token:
+      type: string
+      default: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgODczMzUwYmY5MjY1MzcwNWFlOWM5YTY1N2Q5MmFiYzYKMDAxYWNpZCB00aW1lIDwgMTU1Mjg5MjQyOAowMDJmc2lnbmF00dXJlIE4ZtpU2e5tNx2OQK5kq8k7ujbXUZbNDios004aaOfpmkCg"
+
+    oneprovider_name:
+      type: string
+      default: "infn-otc.onedata.hnsc.otc-service.com"
+
     cms_stageoutsite:
       type: string
       default: "T1_IT_CNAF"
@@ -101,7 +121,6 @@ topology_template:
     elasticsearch_secret:
       type: string
       default: "ES-secret"
- 
   node_templates:
 
     mesos_master:
@@ -115,6 +134,14 @@ topology_template:
       requirements:
         - host: mesos-master-server
 
+
+    cms_oneclient:
+      type: tosca.nodes.indigo.CmsOneclient
+      properties:
+        oneclient_pkg: { get_input: oneclient_pkg }
+      requirements:
+        - host: mesos_slave
+       
     cms_services:
       type: tosca.nodes.indigo.CmsServices
       properties:
@@ -127,6 +154,8 @@ topology_template:
         iam_client_secret: { get_input: iam_client_secret }
         master_ips: { get_attribute: [ mesos-master-server, private_address ] }
         cms_local_site: { get_input: cms_local_site }
+        oneclient_token: { get_input: oneclient_token }
+        oneprovider_name: { get_input: oneprovider_name }
       requirements:
         - host: mesos_master
 
@@ -146,6 +175,8 @@ topology_template:
         cms_local_site: { get_input: cms_local_site }
         cms_stageoutsite: { get_input: cms_stageoutsite }
         cms_stageoutprotocol: { get_input: cms_stageoutprotocol }
+        cms_input_protocol: { get_input: cms_input_protocol }
+        cms_input_path: { get_input: cms_input_path }
         cms_stageoutcommand: { get_input: cms_stageoutcommand }
         cms_phedexnode: { get_input: cms_phedexnode } 
         monitordb_ip: { get_input: monitordb_ip }

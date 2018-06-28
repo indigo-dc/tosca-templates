@@ -29,7 +29,8 @@ topology_template:
            count: 1
        host:
          properties:
-           instance_type: m1.small
+           num_cpus: 1
+           mem_size: 2 GB  
        os:
          properties:
            image: Ubuntu_16.04

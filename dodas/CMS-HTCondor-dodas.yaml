@@ -94,6 +94,14 @@ topology_template:
       type: string
       default: "srmv2"
 
+    cms_stageoutcommand:
+      type: string
+      default: "gfal2"
+
+    cms_phedexnode:
+      type: string
+      default: "T1_IT_CNAF_Disk"
+
 # DODAS-Monitoring specific params (NOTE this is optional)
     monitordb_ip:
       type: string 
@@ -147,6 +155,8 @@ topology_template:
         cms_local_site: { get_input: cms_local_site }
         cms_stageoutsite: { get_input: cms_stageoutsite }
         cms_stageoutprotocol: { get_input: cms_stageoutprotocol }
+        cms_stageoutcommand: { get_input: cms_stageoutcommand }
+        cms_phedexnode: { get_input: cms_phedexnode } 
         monitordb_ip: { get_input: monitordb_ip }
         elasticsearch_secret: { get_input: elasticsearch_secret }
       requirements:
@@ -161,6 +171,7 @@ topology_template:
         marathon_password: { get_input: marathon_password }
       requirements:
         - host: mesos-lb-server
+        - dependency: mesos_master
 
     mesos-master-server:
       type: tosca.nodes.indigo.Compute
