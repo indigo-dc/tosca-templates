@@ -1,22 +1,24 @@
-# tosca-templates
+# INDIGO-DataCloud tosca-templates
+
 These are the TOSCA Templates Supporting the Use Cases for INDIGO-DataCloud.
 The applications currently supported are:
 
-* amber/ambertools.yaml: Deploy an instance that supports [AmberTools](http://ambermd.org).
-* amber/amber_job_*.yaml: Run the amber tool [_sander_] (https://github.com/indigo-dc/tosca-templates/blob/add_chronos_templates/amber/scripts/amber_run.sh#L39-L45)  through a Chronos job.
+* `amber/ambertools.yaml`: Deploy an instance that supports [AmberTools](http://ambermd.org).
 
-* disvis.yaml: Deploy an instance that supports [DisVis](https://github.com/haddocking/disvis.git).
+* `amber/amber_job_*.yaml`: Run the amber tool [_sander_] (https://github.com/indigo-dc/tosca-templates/blob/add_chronos_templates/amber/scripts/amber_run.sh#L39-L45)  through a Chronos job.
 
-* docker-kepler.yaml: Deploy a container with the [Kepler WF engine](https://kepler-project.org/) in the OneDock testbed.
+* `disvis.yaml`: Deploy an instance that supports [DisVis](https://github.com/haddocking/disvis.git).
 
-* galaxy.yaml: Deploy a [Galaxy](http://galaxyproject.org/) server configured to execute jobs locally.
+* `docker-kepler.yaml`: Deploy a container with the [Kepler WF engine](https://kepler-project.org/) in the OneDock testbed.
 
-* galaxy_elastic_cluster.yaml:  Deploy a [Galaxy](http://galaxyproject.org/) server configured with a SLURM elastic cluster as LRMS.
+* `galaxy.yaml`: Deploy a [Galaxy](http://galaxyproject.org/) server configured to execute jobs locally.
 
-* mesos_cluster.yaml: Deploy a [mesos](https://mesos.apache.org/) cluster. The cluster is composed by one master, three slaves and one load balancer.
- 
-* powerfit.yaml: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
+* `galaxy_elastic_cluster.yaml`:  Deploy a [Galaxy](http://galaxyproject.org/) server configured with a SLURM elastic cluster as LRMS.
 
-* dodas/*.yaml: Deploy an HTCondor cluster on Mesos (DODAS) 
+* `mesos_cluster.yaml`: Deploy a [mesos](https://mesos.apache.org/) cluster. The cluster is composed by one master, three slaves and one load balancer.
+
+* `powerfit.yaml`: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
+
+* `dodas/*.yaml`: Deploy an HTCondor cluster on Mesos (DODAS)
 
 
