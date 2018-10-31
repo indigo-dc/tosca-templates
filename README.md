@@ -5,7 +5,7 @@ The applications currently supported are:
 
 * `amber/ambertools.yaml`: Deploy an instance that supports [AmberTools](http://ambermd.org).
 
-* `amber/amber_job_*.yaml`: Run the amber tool [_sander_] (https://github.com/indigo-dc/tosca-templates/blob/add_chronos_templates/amber/scripts/amber_run.sh#L39-L45)  through a Chronos job.
+* `amber/amber_job_*.yaml`: Run the amber tool [_sander_](http://ambermd.org/) through a Chronos job.
 
 * `disvis.yaml`: Deploy an instance that supports [DisVis](https://github.com/haddocking/disvis.git).
 
@@ -20,5 +20,11 @@ The applications currently supported are:
 * `powerfit.yaml`: Deploy an instance that supports [PowerFit](https://github.com/haddocking/disvis.git).
 
 * `dodas/*.yaml`: Deploy an HTCondor cluster on Mesos (DODAS)
+
+**User guides:**
+
+* [Brief guide to TOSCA](doc/tosca.md)
+
+* [How to deploy a TOSCA Template](doc/tosca-deploy.md)
 
 
