@@ -20,10 +20,22 @@ topology_template:
       type: string
       description: a full URI to a FutureGateway instance
       required: yes
+    token_service_uri:
+      type: string
+      description: a full URI to the token webservice endpoint (part of indigo-dc/LiferayPlugins)
+      required: no
+    token_service_user:
+      type: string
+      description: username to authenticate in the token webservice endpoint (part of indigo-dc/LiferayPlugins)
+      required: no
+    token_service_password:
+      type: string
+      description: password to authenticate in the token webservice endpoint (part of indigo-dc/LiferayPlugins)
+      required: no
     task_id:
       type: string
       description: the ID of the FutureGateway task
-      required: yes
+      required: no
     cpus:
       type: float
       description: Amount of CPUs for this job
@@ -46,9 +58,12 @@ topology_template:
           CONFIG_JSON: { get_input: config_json }
           FUTUREGATEWAY_URI: { get_input: futuregateway_uri }
           TASK_ID: { get_input: task_id }
+          TOKEN_SERVICE_URI: { get_input: token_service_uri }
+          TOKEN_SERVICE_USER: { get_input: token_service_user }
+          TOKEN_SERVICE_PASSWORD: { get_input: token_service_password }
       artifacts:
         image:
-          file: indigodatacloudapps/kepler-batch:1.1
+          file: indigodatacloudapps/kepler-batch:1.3
           type: tosca.artifacts.Deployment.Image.Container.Docker
       requirements:
         - host: runtime
