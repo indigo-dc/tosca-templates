@@ -45,6 +45,23 @@ topology_template:
       default: false
       required: false
 
+    galaxy_storage_type:
+      type: string
+      description: Storage type (Iaas Block Storage, Onedata, Filesystem encryption)
+      default: "IaaS"
+    userdata_provider:
+      type: string
+      description: default OneProvider
+      default: "not_a_privder_url"
+    userdata_token:
+      type: string
+      description: Access token for onedata space
+      default: "not_a_token"
+    userdata_space:
+      type: string
+      description: Onedata space
+      default: "galaxy"
+
     admin_email:
       type: string
       description: email of the admin user
@@ -136,8 +153,12 @@ topology_template:
         - wn: wn_node
 
     galaxy_portal:
-      type: tosca.nodes.indigo.GalaxyPortal
+      type: tosca.nodes.indigo.GalaxyPortalAndStorage
       properties:
+        os_storage: { get_input: galaxy_storage_type }
+        token: { get_input: userdata_token }
+        provider: { get_input: userdata_provider }
+        space: { get_input: userdata_space }
         admin_email: { get_input: admin_email }
         admin_api_key: { get_input: admin_api_key }
         version: { get_input: version }
@@ -237,6 +258,11 @@ topology_template:
             min_instances: 0
       requirements:
         - host: lrms_wn
+        # This component install slurm.
+        # Galaxy send jobs to slurm as {{ galaxy }} user.
+        # So the user has to be created before the slurm installation.
+        # Galaxy user creation is done in galaxy_wn.
+        - dependency: galaxy_wn
 
     galaxy_wn:
       type: tosca.nodes.indigo.GalaxyWnCvmfsReferenceData
@@ -254,6 +280,10 @@ topology_template:
         refdata_dir: { get_input: refdata_dir }
       requirements:
         - host: lrms_wn
+        # The worker node has to be configured after the galaxy_portal component
+        # since the {{ export_dir }} and the external volume is created there.
+        # This is mandatory for wn_num_min > 0, while can be ignored for pure elastic clusters.
+        - dependency: galaxy_portal
 
     lrms_wn:
       type: tosca.nodes.indigo.Compute
