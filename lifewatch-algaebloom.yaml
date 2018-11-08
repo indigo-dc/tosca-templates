@@ -8,29 +8,25 @@ description: TOSCA examples for specifying a Chronos Job that runs an applicatio
 topology_template:
   inputs:
 
-    input_onedata_token:
-      type: string
-      description: User token required to mount the user's INPUT Onedata space
+#    input_onedata_providers:
+#      type: string
+#      description: list of favorite Onedata providers to be used to mount the Input Onedata space. If not provided and the flag smart_scheuling is set to true, data locality algo will be applied.
+#      default: ''
+#      required: no
+#    
+#    output_onedata_providers:
+#      type: string
+#      description: list of favorite Onedata providers to be used to mount the Output Onedata space. If not provided and the flag smart_scheuling is set to true, the same provider(s) used to mount the input space will be used.
+#      default: ''
+#      required: no
+
+    smart_scheduling:
+      type: bool
+      description: Enable data locality 
       required: yes
+      default: true
     
-    output_onedata_token:
-      type: string
-      description: User token required to mount the user's OUTPUT Onedata space. It can be the same as the input token
-      required: yes
-    
-    input_onedata_providers:
-      type: string
-      description: csv list of favorite Onedata providers to be used to mount the Input Onedata space. If not provided, data locality algo will be applied.
-      default: ''
-      required: no
-    
-    output_onedata_providers:
-      type: string
-      description: csv list of favorite Onedata providers to be used to mount the Output Onedata space. If not provided, the same provider(s) used to mount the input space will be used.
-      default: ''
-      required: no
-    
-    input_onedata_space:
+    input_space_name:
       type: string
       description: Onedata space where the application input data are stored
       required: yes
@@ -40,7 +36,7 @@ topology_template:
       description: Path to the input data inside the Input Onedata space
       required: yes
     
-    output_onedata_space:
+    output_space_name:
       type: string
       description: Onedata space where the application output will be stored. It can be the same as the Input Onedata space
       required: yes 
@@ -91,16 +87,16 @@ topology_template:
         retries: 3
         environment_variables:
           D3D_VALUE: { get_input: d3d_value }
-          INPUT_ONEDATA_TOKEN: { get_input: input_onedata_token }
-          OUTPUT_ONEDATA_TOKEN: { get_input: output_onedata_token }
+          INPUT_ONEDATA_TOKEN: { get_attribute : [ input_onedata_space, token ] }
+          OUTPUT_ONEDATA_TOKEN: { get_attribute : [ output_onedata_space, token ] }
           D3D_PARAM: { get_input: d3d_param }
           INPUT_CONFIG_FILE: { get_input: input_config_file }
           D3D_BIN: '/delft3d_repository'
-          INPUT_ONEDATA_PROVIDERS: { get_input: input_onedata_providers }
-          OUTPUT_ONEDATA_PROVIDERS: { get_input: output_onedata_providers }
-          INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
+          INPUT_ONEDATA_PROVIDERS: { get_attribute : [ input_onedata_space, selected_provider ] }
+          OUTPUT_ONEDATA_PROVIDERS: { get_attribute : [ output_onedata_space, selected_provider ] }
+          INPUT_ONEDATA_SPACE: { get_input: input_space_name }
           INPUT_PATH: { get_input: input_path }
-          OUTPUT_ONEDATA_SPACE: { get_input: output_onedata_space }
+          OUTPUT_ONEDATA_SPACE: { get_input: output_space_name }
           OUTPUT_PATH: 'output_path'
           OUTPUT_FILENAMES: { get_input: output_filenames }
       artifacts:
@@ -119,3 +115,17 @@ topology_template:
             num_cpus: { get_input: cpus }
             mem_size: { get_input: mem }
             volumes: [ '/data:rw' ]
+
+
+    input_onedata_space:
+      type: tosca.nodes.indigo.OnedataSpace
+      properties:
+        space: { get_input: input_space_name }
+        smartScheduling: { get_input: smart_scheduling }
+
+    output_onedata_space:
+      type: tosca.nodes.indigo.OnedataSpace
+      properties:
+        space: { get_input: output_space_name }
+        smartScheduling: { get_input: smart_scheduling }
+
