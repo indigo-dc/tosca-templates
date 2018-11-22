@@ -21,6 +21,8 @@ The applications currently supported are:
 
 * `dodas/*.yaml`: Deploy an HTCondor cluster on Mesos (DODAS)
 
+* `deep-oc`: DEEP-Hybrid-DataCloud Open Catalog.
+
 **User guides:**
 
 * [Brief guide to TOSCA](doc/tosca.md)
