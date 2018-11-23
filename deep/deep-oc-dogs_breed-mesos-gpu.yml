@@ -70,7 +70,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "vykozlov/deep-oc-dogs_breed_det"
+          file: "deephdc/deep-oc-dogs_breed_det"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:
