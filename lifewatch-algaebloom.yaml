@@ -21,7 +21,7 @@ topology_template:
 #      required: no
 
     smart_scheduling:
-      type: bool
+      type: boolean
       description: Enable data locality 
       required: yes
       default: true
