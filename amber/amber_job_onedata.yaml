@@ -58,8 +58,8 @@ topology_template:
           INPUT_ONEDATA_PROVIDERS: { get_attribute : [ input_onedata_space, selected_provider ] }
           OUTPUT_ONEDATA_TOKEN: { get_attribute : [ output_onedata_space, token ] }
           OUTPUT_ONEDATA_PROVIDERS: { get_attribute : [ output_onedata_space, selected_provider ] }
-          INPUT_ONEDATA_SPACE: { get_input: input_space_name }
-          OUTPUT_ONEDATA_SPACE: { get_input: output_space_name }
+          INPUT_ONEDATA_SPACE: { get_input: input_onedata_space }
+          OUTPUT_ONEDATA_SPACE: { get_input: output_onedata_space }
           INPUT_PATH: { get_input: input_path }
           OUTPUT_PATH: { get_input: output_path }
           OUTPUT_FILENAMES: { get_input: output_filenames }
@@ -83,12 +83,12 @@ topology_template:
     input_onedata_space:
       type: tosca.nodes.indigo.OnedataSpace
       properties:
-        space: { get_input: input_space_name }
+        space: { get_input: input_onedata_space }
         smartScheduling: true
 
     output_onedata_space:
       type: tosca.nodes.indigo.OnedataSpace
       properties:
-        space: { get_input: output_space_name }
+        space: { get_input: output_onedata_space }
         smartScheduling: true
 
