@@ -3,7 +3,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/dodas_roll/custom_types.yaml
 
-description: TOSCA template for a complete CMS Site over Mesos orchestrator on tystem. To be taken as example on how to deal at TOSCA level with VPC and subnets (slave_network_name below)
+
+description: TOSCA template for a complete CMS Site over Mesos orchestrator: this run on Google. Check specific piece of config GB->GIB. "instance_type: custom" for the flavour selection. Check below
 
 topology_template:
 
@@ -12,7 +13,7 @@ topology_template:
 #  Marathon and Mesos related configuration parameters
     marathon_username:
       type: string
-      default: "Marathon-user"
+      default: "user"
 
     marathon_password:
       type: string
@@ -26,25 +27,21 @@ topology_template:
       type: string
       default: "changeme"
 
-    slave_network_name:
-      type: string
-      default: "40d681b7-2172-4d5a-8468-7df454b124bf.PRIVATE"
-
     number_of_masters:
       type: integer
       default: 1
 
     master_instance_type:
       type: string
-      default: "s2.2xlarge.2"
+      default: "n1-standard-8"
 
     number_of_slaves:
       type: integer
-      default: 125
+      default: 9
 
     slave_instance_type:
       type: string
-      default: "s2.2xlarge.2"
+      default: "n1-standard-8"
 
     number_of_lbs:
       type: integer
@@ -52,17 +49,18 @@ topology_template:
 
     lb_instance_type:
       type: string
-      default: "s2.2xlarge.2"
+      default: "n1-standard-8"
 
     server_image:
       type: string
-      default: "ost://iam.eu-de.otc.t-systems.com/eda33dec-df09-45ad-9ba1-5f99c94a18cd"
+      default: "gce://europe-west1-b/dodas-xenial"
 
 ####
 # IAM related configurations to enable the OIDC to X.509 certificate translation
+
     iam_token:
       type: string
-      default: "DODAS-IAM.Token"
+      default: "IAM-User-Token"
 
     iam_client_id:
       type: string
@@ -70,12 +68,12 @@ topology_template:
 
     iam_client_secret:
       type: string
-      default: "IAM-Client-Secret"
-# CMS specific configurations 
+      default: "IAM-Client-Sec"
 
+# CMS specific configurations 
     cms_local_site:
       type: string
-      default: "T3_IT_Opportunistic_hnsci"
+      default: "T3_IT_Opportunistic"
       
     cms_stageoutsite:
       type: string
@@ -96,16 +94,17 @@ topology_template:
     cms_xrd_readserver:
       type: string
       default: "xrootd.ba.infn.it"
+      # default: "104.155.3.224:31194"
 
 # DODAS-Monitoring specific params (NOTE this is optional)
     monitordb_ip:
       type: string 
-      default: "ES-Endpoint"
+      default: "IP:PORT"
  
     elasticsearch_secret:
       type: string
-      default: "ES-secret"
- 
+      default: "changeme"
+
   node_templates:
 
     mesos_master:
@@ -188,7 +187,10 @@ topology_template:
             count: { get_input: number_of_masters }
         host:
           properties:
-            instance_type: { get_input: master_instance_type } 
+            instance_type: custom #Goolgle flavour selection
+            num_cpus: 8
+            mem_size: 8 GIB   #Google syntax
+            disk_size: 100 GIB
         os:
           properties:
             image: { get_input: server_image }
@@ -196,15 +198,15 @@ topology_template:
     mesos-slave-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
-        endpoint:
-          properties:
-            network_name: { get_input: slave_network_name }
         scalable:
           properties:
             count: { get_input: number_of_slaves }
         host:
           properties:
-            instance_type: { get_input: slave_instance_type } 
+            instance_type: custom
+            num_cpus: 16
+            mem_size: 34 GIB
+            disk_size: 50 GIB
         os:
           properties:
             image: { get_input: server_image }
@@ -221,16 +223,18 @@ topology_template:
           properties:
         host:
           properties:
-            instance_type: { get_input: lb_instance_type } 
+            instance_type: custom
+            num_cpus: 8
+            mem_size: 8 GIB
+            disk_size: 50 GIB
         os:
           properties:
             image: { get_input: server_image }
 
   outputs:
     mesos_lb_ip:
-      value: { get_attribute: [ mesos-lb-server, private_address ] }
+      value: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
     mesos_endpoint:
       value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':5050' ] }
     marathon_endpoint:
       value: { concat: [ 'https://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8443' ] }
-

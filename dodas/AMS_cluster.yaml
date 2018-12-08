@@ -4,7 +4,7 @@ imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/dodas_roll/custom_types.yaml
 
 
-description: TOSCA template for specifying a Mesos Cluster with a containerized HTCondor batch system. It relies in GSI authn mechanism. Check below how the spool dir is managed via TOSCA. 
+description: TOSCA example for specifying a Mesos Cluster with a containerized HTCondor batch system 
 
 topology_template:
 
@@ -69,6 +69,36 @@ topology_template:
       type: string
       default: "dodasts/ttscache"
 
+    # Parameters repo
+    ams_repo_server_url: 
+      type: string
+      default: "http://IP-HERE/cvmfs/ams.local.repo"
+
+    ams_repo_public_key_path: 
+      type: string
+      default: "/etc/cvmfs/keys/ams.local.repo.pub"
+
+    ams_repo_repository_name: 
+      type: string
+      default: "ams.local.repo"
+
+    ams_repo_public_key_url:
+      type: string
+      default: "https://gist.githubusercontent.com/spigad/b19fa3a3e32bcc63ce6bc1513a9bc4aa/raw/0dd06039513fa194775adb87ab60891fb55903d4/ams-cvmfs-google"
+
+    ams_repo_public_key: 
+      type: string
+      default: |
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4ZnSyYfHJSZ4qiKsVW99
+        /xcrEZgv2auLLRM4JClsy87nINClaujAONAOK64308ZhJXVMx9z0PywZ6Ngy2TO1
+        rjrissJP0LBavxm2SuPKWep9lQczVkOtQsWNN1YoKDF6jMvHCtIOROZuHZniDr0U
+        CZCq2j7zni2t0kbBErpry0M+wTtkOIMcTPI6joem8JcRQ8NU915eWCAiwbe5C4Gj
+        dOSZdlvqN+zEUWc+ZlgMqNnqyda1QD0msoiCT+DfKn2B0O+EqVjw1IHyHOVEc9QS
+        X9rqkIIcnYfK8gPE2eA6BOFF0TMzW7zrcLd2B8LkSIhurhPFRJRz8ZtekOOr21J8
+        jwIDAQAB
+        -----END PUBLIC KEY-----
+    
   node_templates:
 
     mesos_master:
@@ -115,6 +145,32 @@ topology_template:
         - host: mesos-lb-server
         - dependency: mesos_master
 
+    ams_services:
+      type: tosca.nodes.indigo.AmsCondorMasterConfig
+      properties:
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        ams_default_squid: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+      requirements:
+        - host: mesos_master
+
+    ams_executor:
+      type: tosca.nodes.indigo.AmsCondorExecuteConfig
+      properties:
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
+        htcondor_config_ccb_ip: { get_attribute: [ mesos-ccb-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        htcondor_config_condor_host: { get_attribute: [ mesos-ccb-server, private_address, 0 ]}
+        htcondor_config_ccb_address: { get_attribute: [ mesos-ccb-server, public_address, 0 ]}
+        htcondor_config_condor_image: "dodasts/ams"
+      requirements:
+        - host: mesos_master
+        - dependency: htcondor_services
+
     htcondor_services:
       type: tosca.nodes.indigo.HTCondorServices
       properties:        
@@ -130,7 +186,7 @@ topology_template:
         htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
         htcondor_config_ccb_ip: { get_attribute: [ mesos-ccb-server, private_address, 0 ] }
         config_mode: "master"
-        htcondor_config_condor_image: "dodasts/htcondor:dciangotdev"
+        htcondor_config_condor_image: "dodasts/ams"
         proxycache_host: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
         iam_access_token: { get_input: iam_token }
         iam_client_id: { get_input: iam_client_id }
@@ -138,6 +194,27 @@ topology_template:
         proxycache_image: { get_input: proxycache_image }
       requirements:
         - host: mesos_master
+
+    condor_wn:
+      type: tosca.nodes.indigo.AmsCondorWnConfig
+      properties:
+        marathon_username: { get_input: marathon_username }
+        marathon_password: { get_input: marathon_password }
+        master_ips: { get_attribute: [ mesos-master-server, private_address ] }
+        number_of_wn_instances: { get_input: number_of_wn_instances }
+        number_of_slaves: { get_input: number_of_slaves }
+        cpu_x_wn: { get_input: cpu_x_wn }
+        ram_x_wn: { get_input: ram_x_wn }
+        docker_cpu_x_wn: { get_input: docker_cpu_x_wn }
+        docker_ram_x_wn: { get_input: docker_ram_x_wn }
+        ams_default_squid: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        ams_repo_server_url: { get_input: ams_repo_server_url }
+        ams_repo_public_key_path: { get_input: ams_repo_public_key_path }
+        ams_repo_repository_name: { get_input: ams_repo_repository_name }
+        ams_repo_public_key_url: { get_input: ams_repo_public_key_url }
+        ams_repo_public_key: { get_input: ams_repo_public_key }
+      requirements:
+        - host: mesos_slave
 
     ##
     # Resource section

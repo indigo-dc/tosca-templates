@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/dodas_roll/custom_types.yaml
 
-description: TOSCA template for a complete CMS Site over Mesos orchestrator on tystem. To be taken as example on how to deal at TOSCA level with VPC and subnets (slave_network_name below)
+description: TOSCA template for a complete CMS Site over Mesos orchestrator running on AWS. Below TOSCA example for OS and host propertes definition on AWS. Also policy setting for availability zone choice is shown below
 
 topology_template:
 
@@ -12,7 +12,7 @@ topology_template:
 #  Marathon and Mesos related configuration parameters
     marathon_username:
       type: string
-      default: "Marathon-user"
+      default: "admin"
 
     marathon_password:
       type: string
@@ -20,43 +20,52 @@ topology_template:
 
     mesos_username:
       type: string
-      default: "Mesos-user"
+      default: "admin"
 
     mesos_password:
       type: string
       default: "changeme"
 
-    slave_network_name:
-      type: string
-      default: "40d681b7-2172-4d5a-8468-7df454b124bf.PRIVATE"
-
     number_of_masters:
       type: integer
       default: 1
 
-    master_instance_type:
+    num_cpus_master:
+      type: integer
+      default: 4
+
+    mem_size_master:
       type: string
-      default: "s2.2xlarge.2"
+      default: "8 GB"
 
     number_of_slaves:
       type: integer
-      default: 125
+      default: 1
 
-    slave_instance_type:
+    num_cpus_slave:
+      type: integer
+      default: 16
+
+    mem_size_slave:
       type: string
-      default: "s2.2xlarge.2"
+      default: "32 GB"
 
     number_of_lbs:
       type: integer
       default: 1
 
-    lb_instance_type:
+    num_cpus_lb:
+      type: integer
+      default: 4
+
+    mem_size_lb:
       type: string
-      default: "s2.2xlarge.2"
+      default: "8 GB"
 
     server_image:
       type: string
-      default: "ost://iam.eu-de.otc.t-systems.com/eda33dec-df09-45ad-9ba1-5f99c94a18cd"
+      default: "aws://eu-west-1/ami-0773391ae604c49a4"
+      #AMI ID of on-demand 16.04 image: aws://eu-west-1/ami-0773391ae604c49a4
 
 ####
 # IAM related configurations to enable the OIDC to X.509 certificate translation
@@ -71,16 +80,16 @@ topology_template:
     iam_client_secret:
       type: string
       default: "IAM-Client-Secret"
-# CMS specific configurations 
 
+# CMS specific configurations 
     cms_local_site:
       type: string
-      default: "T3_IT_Opportunistic_hnsci"
-      
+      default: "T3_UK_Opportunistic_dodas"
+
     cms_stageoutsite:
       type: string
-      default: "T1_IT_CNAF"
-      
+      default: "T2_UK_London_IC"
+
     cms_stageoutprotocol:
       type: string
       default: "srmv2"
@@ -91,7 +100,7 @@ topology_template:
 
     cms_phedexnode:
       type: string
-      default: "T1_IT_CNAF_Disk"
+      default: "T2_UK_London_IC"
 
     cms_xrd_readserver:
       type: string
@@ -188,26 +197,34 @@ topology_template:
             count: { get_input: number_of_masters }
         host:
           properties:
-            instance_type: { get_input: master_instance_type } 
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master }
+            #preemtible_instance: true   #AWS specific
         os:
           properties:
             image: { get_input: server_image }
+            credential:      #AWS specific
+              user: ubuntu   #AWS specific
+              token: ""      #AWS specific
 
     mesos-slave-server:
       type: tosca.nodes.indigo.Compute
       capabilities:
-        endpoint:
-          properties:
-            network_name: { get_input: slave_network_name }
         scalable:
           properties:
             count: { get_input: number_of_slaves }
         host:
           properties:
-            instance_type: { get_input: slave_instance_type } 
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave }
+            preemtible_instance: true
+            disk_size: 20 GB
         os:
           properties:
             image: { get_input: server_image }
+            credential:
+              user: ubuntu
+              token: ""
 
 
     mesos-lb-server:
@@ -219,18 +236,30 @@ topology_template:
             dns_name: mesoslb
         scalable:
           properties:
+            count: { get_input: number_of_lbs }
         host:
           properties:
-            instance_type: { get_input: lb_instance_type } 
+            num_cpus: { get_input: num_cpus_lb }
+            mem_size: { get_input: mem_size_lb }
+            #preemtible_instance: true
         os:
           properties:
             image: { get_input: server_image }
+            credential:
+              user: ubuntu
+              token: ""
+
+# Example of tosca selection for availability zone
+  policies:
+   - set_availability_zone:
+      type: tosca.policies.Placement
+      properties: { availability_zone: 'eu-west-1c'}
+      targets: [ mesos-slave-server ]
 
   outputs:
     mesos_lb_ip:
-      value: { get_attribute: [ mesos-lb-server, private_address ] }
+      value: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
     mesos_endpoint:
       value: { concat: [ 'http://', get_attribute: [ mesos-master-server, public_address, 0 ], ':5050' ] }
     marathon_endpoint:
       value: { concat: [ 'https://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8443' ] }
-
