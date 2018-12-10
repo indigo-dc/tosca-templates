@@ -1,5 +1,8 @@
 # INDIGO-DataCloud tosca-templates
 
+[![GitHub license](https://img.shields.io/github/license/indigo-dc/tosca-templates.svg)](https://github.com/indigo-dc/tosca-templates/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/indigo-dc/tosca-templates.svg)](https://github.com/indigo-dc/tosca-templates/releases)
+
 These are the TOSCA Templates Supporting the Use Cases for INDIGO-DataCloud.
 The applications currently supported are:
 
