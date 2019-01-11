@@ -6,6 +6,9 @@ This directory contains the specific TOSCA templates of the
 
  *  deep-oc-dogs_breed-mesos-cpu.yml   - TOSCA file to deploy [DEEP-OC-dogs_breed_det](https://github.com/indigo-dc/DEEP-OC-dogs_breed_det) on CPU nodes of MESOS.
  *  deep-oc-dogs_breed-mesos-gpu.yml   - TOSCA file to deploy [DEEP-OC-dogs_breed_det](https://github.com/indigo-dc/DEEP-OC-dogs_breed_det) on GPU nodes of MESOS.
+ *  deep-oc-mesos-template.yml   - TOSCA file to deploy [DEEPaaS](https://github.com/indigo-dc/DEEPaaS)
+    applications: The user has to specify the `docker_image` input value with the application docker image.
+ 
 
 
 # Acknowledgement
