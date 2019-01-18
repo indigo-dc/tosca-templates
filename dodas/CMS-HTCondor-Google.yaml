@@ -4,7 +4,7 @@ imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/dodas_roll/custom_types.yaml
 
 
-description: TOSCA template for a complete CMS Site over Mesos orchestrator: this run on Google. Check specific piece of config GB->GIB. "instance_type: custom" for the flavour selection. Check below
+description: "TOSCA template for a complete CMS Site over Mesos orchestrator: this run on Google. Check specific piece of config GB->GIB. \"instance_type: custom\" for the flavour selection. Check below"
 
 topology_template:
 
