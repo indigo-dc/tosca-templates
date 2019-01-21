@@ -4,7 +4,7 @@ imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
 
 description: >
-  TOSCA test for launching a Kubernetes Virtual Cluster.
+  TOSCA for launching a Kubernetes Virtual Cluster with the DEEPaaS app.
 
 topology_template:
   inputs:

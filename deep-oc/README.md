@@ -10,6 +10,8 @@ This directory contains the specific TOSCA templates of the
     applications: The user has to specify the `docker_image` input value with the application docker image.
  *  kubernetes_cluster_deepaas.yaml    - TOSCA file to deploy [DEEPaaS](https://github.com/indigo-dc/DEEPaaS)
     application on top of Kubernetes Cluster. The user has to specify the `docker_image` input value with the application docker image.
+ *  vm_docker_deepaas.yml              - TOSCA file to deploy [DEEPaaS](https://github.com/indigo-dc/DEEPaaS)
+    application on top of a single VM. The user has to specify the `docker_image` input value with the application docker image.
 
 
 # Acknowledgement
