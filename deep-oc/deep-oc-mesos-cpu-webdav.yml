@@ -1,10 +1,28 @@
 topology_template:
   inputs:
 
-    dockerhub_img:
+    docker_image:
       type: string
       description: docker image from Docker Hub to deploy
       required: yes
+
+    mem_size:
+      type: string
+      description: Amount of memory
+      required: no
+      default: "4096"
+
+    num_cpus:
+      type: integer
+      description: Number of required CPUs
+      required: no
+      default: 1
+
+    flaat_disable:
+      type: string
+      description: disable flaat authentication
+      required: no
+      default: "no"
 
     rclone_conf:
       type: string
@@ -45,8 +63,8 @@ topology_template:
             publish_ports:
             - protocol: "tcp"
               source: 5000
-            mem_size: "4096 MB"
-            num_cpus: 1
+            mem_size: { get_input: mem_size }
+            num_cpus: { get_input: num_cpus }
         scalable:
           properties:
             min_instances: 1
@@ -74,7 +92,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: { get_input: dockerhub_img }
+          file: { get_input: docker_image }
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:
