@@ -86,7 +86,7 @@ topology_template:
                 source: 30443
               xcache_port:
                 protocol: tcp
-                source: 1194
+                source: 31194
         scalable:
           properties:
             count: { get_input: number_of_masters }
