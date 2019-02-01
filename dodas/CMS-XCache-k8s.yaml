@@ -114,3 +114,7 @@ topology_template:
         os:
           properties:
             image: { get_input: server_image }
+
+  outputs:
+    k8s_endpoint:
+      value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
