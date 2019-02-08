@@ -40,7 +40,7 @@ topology_template:
       type: string
       description: remote storage link to access via webdav
       required: no
-      default: ""
+      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
     rclone_vendor:
       type: string
