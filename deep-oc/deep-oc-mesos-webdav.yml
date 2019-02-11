@@ -66,6 +66,12 @@ topology_template:
       required: no
       default: ""
 
+    jupyter_config_url:
+      type: string
+      description: url to download some jupyter config
+      required: no
+      default: ""
+
     run_command:
       type: string
       description: default command to run
@@ -108,6 +114,7 @@ topology_template:
           RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_pass}
+          jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
         priviliged: false
@@ -123,6 +130,10 @@ topology_template:
   outputs:
     Docker_host_publish_ports:
       value: { get_property: [ Docker, host, publish_ports ] }
+    Docker_host_num_cpus:
+      value: { get_property: [ Docker, host, num_cpus ] }
+    Docker_host_num_gpus:
+      value: { get_property: [ Docker, host, num_gpus ] }
     deepaas_endpoint:
       value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
