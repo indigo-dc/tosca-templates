@@ -1,0 +1,146 @@
+topology_template:
+  inputs:
+
+    docker_image:
+      type: string
+      description: docker image from Docker Hub to deploy
+      required: yes
+      default: "deephdc/deep-oc-mods"
+
+    mem_size:
+      type: string
+      description: Amount of memory
+      required: no
+      default: "4096 MB"
+
+    num_cpus:
+      type: integer
+      description: Number of required CPUs
+      required: no
+      default: 1
+
+    num_gpus:
+      type: integer
+      description: Number of required GPUs
+      required: no
+      default: 0
+
+    flaat_disable:
+      type: string
+      description: disable flaat authentication
+      required: no
+      default: "no"
+
+    rclone_conf:
+      type: string
+      description: rclone.conf location
+      required: no
+      default: "/srv/.rclone.conf"
+
+    rclone_url:
+      type: string
+      description: remote storage link to access via webdav
+      required: no
+      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
+
+    rclone_vendor:
+      type: string
+      description: rclone vendor
+      required: no
+      default: "nextcloud"
+  
+    rclone_user:
+      type: string
+      description: rclone user to access remote storage
+      required: no
+      default: ""
+
+    rclone_pass:
+      type: string
+      description: rclone user password
+      required: no
+      default: ""
+
+    jupyter_pass:
+      type: string
+      description: jupyter password
+      required: no
+      default: ""
+
+    jupyter_config_url:
+      type: string
+      description: url to download some jupyter config
+      required: no
+      default: ""
+
+    run_command:
+      type: string
+      description: default command to run
+      required: yes
+      default: "deepaas-run --listen-ip=0.0.0.0"
+
+  node_templates:
+    Docker:
+      type: "tosca.nodes.indigo.Container.Runtime.Docker"
+      capabilities:
+        host:
+          properties:
+            publish_all: false
+            publish_ports:
+            - protocol: "tcp"
+              source: 5000
+            - protocol: "tcp"
+              source: 6006
+            - protocol: "tcp"
+              source: 8888
+            mem_size: { get_input: mem_size }
+            num_cpus: { get_input: num_cpus }
+            num_gpus: { get_input: num_gpus }
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+    marathon:
+      type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
+      properties:
+        force_pull_image: true
+        command: { get_input: run_command }
+        environment_variables:
+          RCLONE_CONFIG: { get_input: rclone_conf }
+          RCLONE_CONFIG_DEEPNC_TYPE: webdav
+          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
+          jupyterPASSWORD: {get_input: jupyter_pass}
+          jupyterCONFIG_URL: {get_input: jupyter_config_url}
+        labels:
+          HAPROXY_GROUP: "external"
+        priviliged: false
+      requirements:
+      - host:
+          node: "Docker"
+          capability: "tosca.capabilities.indigo.Container.Docker"
+          relationship: "tosca.relationships.HostedOn"
+      artifacts:
+        image:
+          file: { get_input: docker_image }
+          type: "tosca.artifacts.Deployment.Image.Container.Docker"
+  outputs:
+    Docker_host_publish_ports:
+      value: { get_property: [ Docker, host, publish_ports ] }
+    Docker_host_num_cpus:
+      value: { get_property: [ Docker, host, num_cpus ] }
+    Docker_host_num_gpus:
+      value: { get_property: [ Docker, host, num_gpus ] }
+    deepaas_endpoint:
+      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+    monitor_endpoint:
+      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
+    jupyter_endpoint:
+      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
+tosca_definitions_version: "tosca_simple_yaml_1_0"
+imports:
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml"
