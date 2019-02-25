@@ -69,7 +69,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "sht3v0/deep-oc-mods:cpu"
+          file: "deephdc/deep-oc-mods"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:
