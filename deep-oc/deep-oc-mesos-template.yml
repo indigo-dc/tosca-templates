@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: Application Docker image 
       required: yes
-      default: 'deephdc/image-classification-tf'
+      default: 'docker_module_here'
 
     num_gpus:
       type: integer
