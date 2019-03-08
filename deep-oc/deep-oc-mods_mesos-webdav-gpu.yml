@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: 'deephdc/deep-oc-mods:gpu'
       required: yes
-      default: "deephdc/deep-oc-mods"
+      default: "deephdc/deep-oc-mods:gpu"
 
     mem_size:
       type: string
