@@ -70,11 +70,11 @@ topology_template:
         command: 'deepaas-run --listen-ip 0.0.0.0 --listen-port=$PORT0'
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
+          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_pass }
         labels:
           HAPROXY_GROUP: 'external'
         priviliged: false
