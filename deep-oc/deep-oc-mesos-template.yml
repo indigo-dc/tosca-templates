@@ -11,7 +11,7 @@ topology_template:
       type: integer
       description: Number of required GPUs
       required: no
-      default: 0
+      default: 1
 
     rclone_conf:
       type: string
@@ -53,6 +53,8 @@ topology_template:
             publish_ports:
             - protocol: 'tcp'
               source: 5000
+            - protocol: 'tcp'
+              source:6006
             mem_size: '4096 MB'
             num_cpus: 1
             num_gpus: { get_input: num_gpus }
@@ -65,7 +67,7 @@ topology_template:
       type: 'tosca.nodes.indigo.Container.Application.Docker.Marathon'
       properties:
         force_pull_image: true
-        command: 'deepaas-run --listen-ip 0.0.0.0'
+        command: 'deepaas-run --listen-ip 0.0.0.0 --listen-port=$PORT0'
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_DEEPNC_TYPE: webdav
