@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: Application Docker image 
       required: yes
-      default: 'docker_module_here'
+      default: 'deephdc/deep-oc-image-classification-tf'
 
     num_gpus:
       type: integer
@@ -17,7 +17,7 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: no
-      default: '/srv/deepapp/.rclone.conf'
+      default: '/srv/image-classification-tf/.rclone.conf'
 
     rclone_url:
       type: string
