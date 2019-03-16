@@ -54,7 +54,7 @@ topology_template:
             - protocol: 'tcp'
               source: 5000
             - protocol: 'tcp'
-              source:6006
+              source: 6006
             mem_size: '4096 MB'
             num_cpus: 1
             num_gpus: { get_input: num_gpus }
