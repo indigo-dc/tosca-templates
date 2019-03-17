@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: Application Docker image 
       required: yes
-      default: 'deephdc/deep-oc-image-classification-tf'
+      default: 'itokeiic/deep-oc-retinopathy_test'
 
     num_gpus:
       type: integer
