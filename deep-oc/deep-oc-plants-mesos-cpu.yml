@@ -69,7 +69,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "laramaktub/plant-classification-theano-train"
+          file: "deephdc/deep-oc-plants-classification-tf"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:
