@@ -67,7 +67,7 @@ topology_template:
       description: rclone user to access remote storage
       required: no
       default: ""
-    rclone_pass:
+    rclone_password:
       type: string
       description: rclone user password
       required: no
@@ -91,7 +91,7 @@ topology_template:
               deepaas_rclone_url: { get_input: rclone_url }
               deepaas_rclone_vendor: { get_input: rclone_vendor }
               deepaas_rclone_user: { get_input: rclone_user }
-              deepaas_rclone_pass: { get_input: rclone_pass }
+              deepaas_rclone_pass: { get_input: rclone_password }
 
     lrms_front_end:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes

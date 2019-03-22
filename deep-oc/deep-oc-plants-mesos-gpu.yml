@@ -25,7 +25,7 @@ topology_template:
       required: yes
       default: ""
  
-    rclone_pass:
+    rclone_password:
       type: string
       description: rclone user password
       required: yes
@@ -60,7 +60,7 @@ topology_template:
           RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
           RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
         labels:
           HAPROXY_GROUP: "external"
         priviliged: false
