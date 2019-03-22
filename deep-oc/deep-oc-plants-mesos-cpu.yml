@@ -11,6 +11,7 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: yes
+      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
  
     rclone_vendor:
       type: string
