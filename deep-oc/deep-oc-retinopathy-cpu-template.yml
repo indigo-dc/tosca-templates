@@ -11,7 +11,7 @@ topology_template:
       type: integer
       description: Number of required GPUs
       required: no
-      default: 1
+      default: 0
 
     rclone_conf:
       type: string
