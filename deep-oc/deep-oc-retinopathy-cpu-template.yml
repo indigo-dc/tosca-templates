@@ -67,7 +67,7 @@ topology_template:
       type: 'tosca.nodes.indigo.Container.Application.Docker.Marathon'
       properties:
         force_pull_image: true
-        command: 'deepaas-run --listen-ip 0.0.0.0 --listen-port=$PORT0'
+        command: 'deepaas-run --listen-ip 0.0.0.0'
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_NCPLANTS_TYPE: webdav
