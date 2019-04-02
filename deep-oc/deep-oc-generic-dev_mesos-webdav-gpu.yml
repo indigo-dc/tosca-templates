@@ -3,9 +3,9 @@ topology_template:
 
     docker_image:
       type: string
-      description: 'deephdc/deep-oc-generic-dev:gpu'
+      description: 'deephdc/deep-oc-generic-dev:tf-gpu-py36'
       required: yes
-      default: "deephdc/deep-oc-generic-dev:gpu"
+      default: "deephdc/deep-oc-generic-dev:tf-gpu-py36"
 
     mem_size:
       type: string
