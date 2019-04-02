@@ -2,8 +2,9 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
   - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/k8s/custom_types.yaml
+ 
 
-description: TOSCA template for a complete CMS XCache cluster over K8s orchestrator
+description: TOSCA template for a standard Kubernetes cluster deployment
 
 topology_template:
 
@@ -15,7 +16,7 @@ topology_template:
 
     num_cpus_master: 
       type: integer
-      default: 4
+      default: 2
 
     mem_size_master:
       type: string
@@ -35,37 +36,19 @@ topology_template:
 
     server_image:
       type: string
-      default: "ost://cloud.recas.ba.infn.it/8f667fbc-40bf-45b8-b22d-40f05b48d060"
+      #default: "ost://cloud.recas.ba.infn.it/8f667fbc-40bf-45b8-b22d-40f05b48d060"
+      default: "ost://openstack.fisica.unipg.it/43053c7c-ea87-485e-863a-f6140f8b1147"
+      #default: "ost://horizon.cloud.cnaf.infn.it/3d993ab8-5d7b-4362-8fd6-af1391edca39"
+
 
   node_templates:
 
     k8s_master:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
       properties:
-        admin_token: testme
         kube_version: 1.14.0
+        admin_token: testme
       requirements:
-        - host: k8s-master-server
-
-    xrootd_block_storage:
-      type: tosca.nodes.BlockStorage
-      properties:
-        size: 40 GIB
-
-    cms_xcache:
-      type: tosca.nodes.indigo.XCache
-      properties:
-        master_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
-        orchestrator: "k8s"
-      requirements:
-        - local_storage:
-            node: xrootd_block_storage
-            capability: tosca.capabilities.Attachment
-            relationship:
-              type: tosca.relationships.AttachesTo
-              properties:
-                location: /data/xrd
-                device: hdb
         - host: k8s-master-server
 
     k8s_slave:
@@ -81,7 +64,7 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            network_name: PUBLIC
+            network_name: PUBLIC 
             ports:
               kube_port:
                 protocol: tcp
@@ -89,9 +72,6 @@ topology_template:
               kube_nfs:
                 protocol: tcp
                 source: 2049
-              xcache_port:
-                protocol: tcp
-                source: 31194
         scalable:
           properties:
             count: { get_input: number_of_masters }

@@ -123,6 +123,7 @@ topology_template:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
       properties:
         admin_token: testme
+        kube_version: 1.14.0
       requirements:
         - host: k8s-master-server
 
@@ -130,6 +131,7 @@ topology_template:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
         front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        kube_version: 1.14.0
       requirements:
         - host: k8s-slave-server
 
