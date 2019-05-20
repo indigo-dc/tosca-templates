@@ -47,7 +47,7 @@ topology_template:
       type: tosca.nodes.indigo.HelmInstall 
       properties:
         name: "spark"
-        chart: "stable/spark"
+        chart: "cloudpg/spark"
         values: "https://raw.githubusercontent.com/indigo-dc/tosca-templates/k8s_cms/dodas/config/spark_values.yaml"
       requirements:
         - host: k8s_master
