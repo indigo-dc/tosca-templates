@@ -52,7 +52,7 @@ Zeppelin:
   Cpu: "100m"
   ServicePort: 30084
   ContainerPort: 8080
-  ServiceType: LoadBalancer
+  ServiceType: ClusterIP 
   Ingress:
     Enabled: false
     Path: "/"
