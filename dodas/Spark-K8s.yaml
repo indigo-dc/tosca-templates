@@ -52,6 +52,15 @@ topology_template:
       requirements:
         - host: k8s_master
 
+    helm_jupyter:
+      type: tosca.nodes.indigo.HelmInstall 
+      properties:
+        name: "jupyter"
+        chart: "jupyterhub/jupyterhub"
+        values: "https://raw.githubusercontent.com/indigo-dc/tosca-templates/k8s_cms/dodas/config/jupyter_values.yaml"
+      requirements:
+        - host: helm_spark
+
     k8s_master:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
       #type: tosca.nodes.indigo.HelmInstall 
