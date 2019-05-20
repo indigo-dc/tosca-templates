@@ -83,12 +83,9 @@ topology_template:
               web_ui:
                 protocol: tcp
                 source: 30083
-              notebook:
-                protocol: tcp
-                source: 30084
-              spark:
-                protocol: tcp
-                source: 37077
+              #spark:
+              #  protocol: tcp
+              #  source: 37077
         scalable:
           properties:
             count: { get_input: number_of_masters }
@@ -124,5 +121,3 @@ topology_template:
       value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
     webui_endpoint:
       value: { concat: [ 'http://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30083' ] }
-    notebook_endpoint:
-      value: { concat: [ 'http://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30084' ] }
