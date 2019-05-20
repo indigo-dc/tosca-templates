@@ -43,7 +43,7 @@ topology_template:
 
   node_templates:
 
-    helm_spark:
+    helm_minio:
       type: tosca.nodes.indigo.HelmInstall 
       properties:
         name: "minio"
