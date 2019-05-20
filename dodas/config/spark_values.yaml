@@ -18,7 +18,7 @@ Master:
   ContainerPort: 7077
   # Set Master JVM memory. Default 1g
   # DaemonMemory: 1g
-  ServiceType: LoadBalancer
+  ServiceType: ClusterIP 
 
 WebUi:
   Name: webui

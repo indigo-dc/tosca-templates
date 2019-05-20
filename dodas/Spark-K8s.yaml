@@ -122,3 +122,7 @@ topology_template:
   outputs:
     k8s_endpoint:
       value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
+    webui_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30083' ] }
+    notebook_endpoint:
+      value: { concat: [ 'http://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30084' ] }
