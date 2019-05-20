@@ -14,7 +14,7 @@ Master:
   Component: "spark-master"
   Cpu: "100m"
   Memory: "512Mi"
-  ServicePort: 7077
+  ServicePort: 37077
   ContainerPort: 7077
   # Set Master JVM memory. Default 1g
   # DaemonMemory: 1g
@@ -22,7 +22,7 @@ Master:
 
 WebUi:
   Name: webui
-  ServicePort: 8080
+  ServicePort: 30083
   ContainerPort: 8080
 
 Worker:
@@ -50,7 +50,7 @@ Zeppelin:
   Replicas: 1
   Component: "zeppelin"
   Cpu: "100m"
-  ServicePort: 8080
+  ServicePort: 30084
   ContainerPort: 8080
   ServiceType: LoadBalancer
   Ingress:

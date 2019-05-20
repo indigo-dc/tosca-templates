@@ -82,7 +82,13 @@ topology_template:
                 source: 2049
               web_ui:
                 protocol: tcp
-                source: 8080
+                source: 30083
+              notebook:
+                protocol: tcp
+                source: 30084
+              spark:
+                protocol: tcp
+                source: 37077
         scalable:
           properties:
             count: { get_input: number_of_masters }
