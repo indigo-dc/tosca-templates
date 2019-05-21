@@ -83,9 +83,9 @@ topology_template:
               web_ui:
                 protocol: tcp
                 source: 30083
-              #spark:
-              #  protocol: tcp
-              #  source: 37077
+              jupyter:
+                protocol: tcp
+                source: 8888
         scalable:
           properties:
             count: { get_input: number_of_masters }
