@@ -24,7 +24,7 @@ topology_template:
 
     number_of_slaves:
       type: integer
-      default: 1 
+      default: 2 
 
     num_cpus_slave: 
       type: integer
@@ -109,7 +109,7 @@ topology_template:
             count: { get_input: number_of_slaves }
         host:
           properties:
-            instance_type:  m1.medium
+            instance_type:  m1.large
             #num_cpus: { get_input: num_cpus_slave }
             #mem_size: { get_input: mem_size_slave } 
         os:
