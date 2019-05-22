@@ -8,8 +8,8 @@ Spark:
 
 Master:
   Name: master
-  Image: "k8s.gcr.io/spark"
-  ImageTag: "1.5.1_v3"
+  Image: "dbanda/spark2.4"
+  ImageTag: "v3"
   Replicas: 1
   Component: "spark-master"
   Cpu: "100m"
@@ -24,7 +24,6 @@ WebUi:
   Name: webui
   ServicePort: 8080
   ContainerPort: 8080
-  NodePort: 30083
 
 Worker:
   Name: worker
@@ -33,7 +32,7 @@ Worker:
   Replicas: 3
   Component: "spark-worker"
   Cpu: "100m"
-  Memory: "512Mi"
+  Memory: "1024Mi"
   ContainerPort: 8081
   # Set Worker JVM memory. Default 1g
   # DaemonMemory: 1g
