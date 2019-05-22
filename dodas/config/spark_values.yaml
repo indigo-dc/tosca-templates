@@ -9,7 +9,7 @@ Spark:
 Master:
   Name: master
   Image: "dbanda/spark2.4"
-  ImageTag: "v3"
+  ImageTag: "v4"
   Replicas: 1
   Component: "spark-master"
   Cpu: "100m"
