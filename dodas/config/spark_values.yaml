@@ -27,8 +27,8 @@ WebUi:
 
 Worker:
   Name: worker
-  Image: "k8s.gcr.io/spark"
-  ImageTag: "1.5.1_v3"
+  Image: "dbanda/spark2.4"
+  ImageTag: "v4"
   Replicas: 3
   Component: "spark-worker"
   Cpu: "100m"
