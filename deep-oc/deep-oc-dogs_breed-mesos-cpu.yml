@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-      default: "/srv/dogs_breed_det/.rclone.conf"
+      default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
@@ -74,6 +74,14 @@ topology_template:
   outputs:
     marathon_load_balancer_ips:
       value: { get_attribute: [ marathon, load_balancer_ips ] }
+    Docker_image:
+      value: { get_input: docker_image }
+    Docker_num_cpus:
+      value: { get_property: [ Docker, host, num_cpus ] }
+    Docker_num_gpus:
+      value: { get_property: [ Docker, host, num_gpus ] }
+    command:
+      value: { get_property: [ marathon, command ] }
     Docker_host_publish_ports:
       value: { get_property: [ Docker, host, publish_ports ] }
     endpoint:
