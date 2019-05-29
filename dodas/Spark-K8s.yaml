@@ -36,8 +36,8 @@ topology_template:
 
     server_image:
       type: string
-      #default: "ost://cloud.recas.ba.infn.it/8f667fbc-40bf-45b8-b22d-40f05b48d060"
-      default: "ost://openstack.fisica.unipg.it/43053c7c-ea87-485e-863a-f6140f8b1147"
+      default: "ost://cloud.recas.ba.infn.it/8f667fbc-40bf-45b8-b22d-40f05b48d060"
+      #default: "ost://openstack.fisica.unipg.it/43053c7c-ea87-485e-863a-f6140f8b1147"
       #default: "ost://horizon.cloud.cnaf.infn.it/3d993ab8-5d7b-4362-8fd6-af1391edca39"
 
 
@@ -91,9 +91,9 @@ topology_template:
             count: { get_input: number_of_masters }
         host:
           properties:
-            instance_type:  m1.medium
-            #num_cpus: { get_input: num_cpus_master }
-            #mem_size: { get_input: mem_size_master } 
+            #instance_type:  m1.medium
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master } 
         os:
           properties:
             image: { get_input: server_image }
@@ -109,9 +109,9 @@ topology_template:
             count: { get_input: number_of_slaves }
         host:
           properties:
-            instance_type:  m1.large
-            #num_cpus: { get_input: num_cpus_slave }
-            #mem_size: { get_input: mem_size_slave } 
+            #instance_type:  m1.large
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave } 
         os:
           properties:
             image: { get_input: server_image }
