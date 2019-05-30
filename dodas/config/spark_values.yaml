@@ -9,7 +9,7 @@ Spark:
 Master:
   Name: master
   Image: "cloudpg/spark"
-  ImageTag: "master-2.4.3"
+  ImageTag: "dodas-2.4.3-bigdl"
   Replicas: 1
   Component: "spark-master"
   Cpu: "100m"
