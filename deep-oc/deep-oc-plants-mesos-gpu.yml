@@ -1,5 +1,25 @@
+description: Template for deploying the Plants Classification module developed by the DEEP-Hybrid-Datacloud project.
+             See also https://marketplace.deep-hybrid-datacloud.eu/modules/deep-oc-plants-classification.html
+
 topology_template:
   inputs:
+
+    num_gpus:
+      type: integer
+      description: number of gpus required for the service
+      required: yes
+      default: 1
+
+    num_cpus:
+      type: integer
+      description: number of cpus required for the service
+      required: yes
+      default: 1
+
+    mem_size:
+      type: string
+      description: ram memory required for the service
+      default: 4096 MB
  
     rclone_conf:
       type: string
@@ -41,9 +61,9 @@ topology_template:
             publish_ports:
             - protocol: "tcp"
               source: 5000
-            mem_size: "4096 MB"
-            num_cpus: 1
-            num_gpus: 1
+            mem_size: { get_input: mem_size }
+            num_cpus: { get_input: num_cpus }
+            num_gpus: { get_input: num_gpus }
         scalable:
           properties:
             min_instances: 1
