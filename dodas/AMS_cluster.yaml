@@ -401,5 +401,3 @@ topology_template:
       value: { concat: [ 'https://', get_attribute: [ mesos-master-server, public_address, 0 ], ':8443' ] }
     ccb_endpoint:
       value: { concat: [ 'condor_status  ', get_attribute: [ mesos-ccb-server, public_address, 0 ], ':9618 -schedd' ] }
-    register_endpoint:
-      value: { concat: [ 'http://', get_attribute: [ mesos-slaveschedd-server, public_address, 0 ], ':48080/register' ] }
