@@ -6,6 +6,12 @@ topology_template:
       description: docker image from Docker Hub to deploy
       required: yes
 
+    docker_privileged:
+      type: string
+      description: equivalent of --privileged docker flag
+      required: yes
+      default: false
+
     mem_size:
       type: string
       description: Amount of memory
@@ -117,7 +123,7 @@ topology_template:
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
-        priviliged: false
+        priviliged: { get_input: docker_privileged }
       requirements:
       - host:
           node: "Docker"
