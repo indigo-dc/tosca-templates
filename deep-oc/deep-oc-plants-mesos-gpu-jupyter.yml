@@ -11,7 +11,7 @@ topology_template:
       type: string
       description: Amount of memory
       required: no
-      default: "8096 MB"
+      default: "4096 MB"
 
     num_cpus:
       type: integer
