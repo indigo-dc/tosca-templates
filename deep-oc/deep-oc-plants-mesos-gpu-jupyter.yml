@@ -77,7 +77,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
+      default: "/srv/.jupyter/run_jupyter.sh --allow-root"
 
   node_templates:
     Docker:
