@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: 'deep-oc-plants-classification-tf:gpu'
       required: yes
-      default: "deephdc/deep-oc-plants-classification-tf"
+      default: "deephdc/deep-oc-plants-classification-tf:gpu"
 
     mem_size:
       type: string
