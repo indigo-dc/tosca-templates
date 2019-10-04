@@ -63,7 +63,7 @@ topology_template:
       required: no
       default: ""
       
-      run_command:
+    run_command:
       type: string
       description: default command to run
       required: yes
