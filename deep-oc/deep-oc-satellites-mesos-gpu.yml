@@ -1,35 +1,36 @@
 topology_template:
   inputs:
-
+ 
     rclone_conf:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-      default: "/srv/mods/.rclone.conf"
-
+      default: "/srv/plant-classification-tf-train/.rclone.conf"
+ 
     rclone_url:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-
+      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
+ 
     rclone_vendor:
       type: string
       description: rclone vendor
       required: yes
       default: "nextcloud"
-  
+   
     rclone_user:
       type: string
       description: rclone user to access nextcloud
       required: yes
       default: ""
-
-    rclone_pass:
+ 
+    rclone_password:
       type: string
       description: rclone user password
       required: yes
       default: ""
-
+ 
   node_templates:
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
@@ -40,8 +41,9 @@ topology_template:
             publish_ports:
             - protocol: "tcp"
               source: 5000
-            mem_size: "4096 MB"
+            mem_size: "8192 MB"
             num_cpus: 1
+            num_gpus: 1
         scalable:
           properties:
             min_instances: 1
@@ -51,14 +53,14 @@ topology_template:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
         force_pull_image: true
-        command: "deepaas-run --listen-ip 0.0.0.0"
+        command: "deepaas-run --listen-ip 0.0.0.0 --listen-port $PORT0"
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
+          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
         labels:
           HAPROXY_GROUP: "external"
         priviliged: false
@@ -69,7 +71,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "sht3v0/deep-oc-mods:cpu"
+          file: "deephdc/deep-oc-sen2sr:gpu"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:

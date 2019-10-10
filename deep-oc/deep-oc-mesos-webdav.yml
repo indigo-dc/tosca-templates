@@ -6,6 +6,12 @@ topology_template:
       description: docker image from Docker Hub to deploy
       required: yes
 
+    docker_privileged:
+      type: string
+      description: equivalent of --privileged docker flag
+      required: yes
+      default: false
+
     mem_size:
       type: string
       description: Amount of memory
@@ -34,7 +40,7 @@ topology_template:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/.rclone.conf"
+      default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
@@ -54,13 +60,13 @@ topology_template:
       required: no
       default: ""
 
-    rclone_pass:
+    rclone_password:
       type: string
       description: rclone user password
       required: no
       default: ""
 
-    jupyter_pass:
+    jupyter_password:
       type: string
       description: jupyter password
       required: no
@@ -107,17 +113,17 @@ topology_template:
         command: { get_input: run_command }
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_RSHARE_TYPE: webdav
+          RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
-          jupyterPASSWORD: {get_input: jupyter_pass}
+          jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
-        priviliged: false
+        priviliged: { get_input: docker_privileged }
       requirements:
       - host:
           node: "Docker"
@@ -130,10 +136,14 @@ topology_template:
   outputs:
     Docker_host_publish_ports:
       value: { get_property: [ Docker, host, publish_ports ] }
-    Docker_host_num_cpus:
+    Docker_image:
+      value: { get_input: docker_image }
+    Docker_num_cpus:
       value: { get_property: [ Docker, host, num_cpus ] }
-    Docker_host_num_gpus:
+    Docker_num_gpus:
       value: { get_property: [ Docker, host, num_gpus ] }
+    command:
+      value: { get_property: [ marathon, command ] }
     deepaas_endpoint:
       value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:

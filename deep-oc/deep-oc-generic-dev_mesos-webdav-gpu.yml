@@ -3,9 +3,9 @@ topology_template:
 
     docker_image:
       type: string
-      description: 'deephdc/deep-oc-mods'
+      description: 'deephdc/deep-oc-generic-dev:tf-gpu-py36'
       required: yes
-      default: "deephdc/deep-oc-mods"
+      default: "deephdc/deep-oc-generic-dev:tf-gpu-py36"
 
     mem_size:
       type: string
@@ -17,13 +17,13 @@ topology_template:
       type: integer
       description: Number of required CPUs
       required: no
-      default: 1
+      default: 0
 
     num_gpus:
       type: integer
       description: Number of required GPUs
       required: no
-      default: 0
+      default: 1
 
     flaat_disable:
       type: string
@@ -77,7 +77,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0"
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
 
   node_templates:
     Docker:
@@ -118,6 +118,9 @@ topology_template:
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
+        portDefinitions:
+        - port: 0
+          requirePorts: true
         priviliged: false
       requirements:
       - host:

@@ -1,50 +1,35 @@
-description: Template for deploying the Plants Classification module developed by the DEEP-Hybrid-Datacloud project.
-             See also https://marketplace.deep-hybrid-datacloud.eu/modules/deep-oc-plants-classification.html
-
 topology_template:
   inputs:
 
-    num_cpus:
-      type: integer
-      description: number of cpus required for the service
-      required: yes
-      default: 1
-
-    mem_size:
-      type: string
-      description: ram memory required for the service
-      default: 4096 MB
- 
     rclone_conf:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-      default: "/srv/plant-classification-tf-train/.rclone.conf"
- 
+      default: "/srv/mods/.rclone.conf"
+
     rclone_url:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
- 
+
     rclone_vendor:
       type: string
       description: rclone vendor
       required: yes
       default: "nextcloud"
-   
+  
     rclone_user:
       type: string
       description: rclone user to access nextcloud
       required: yes
       default: ""
- 
+
     rclone_password:
       type: string
       description: rclone user password
       required: yes
       default: ""
- 
+
   node_templates:
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
@@ -55,8 +40,8 @@ topology_template:
             publish_ports:
             - protocol: "tcp"
               source: 5000
-            mem_size: { get_input: mem_size }
-            num_cpus: { get_input: num_cpus }
+            mem_size: "4096 MB"
+            num_cpus: 1
         scalable:
           properties:
             min_instances: 1
@@ -69,11 +54,11 @@ topology_template:
         command: "deepaas-run --listen-ip 0.0.0.0"
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
-          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
+          RCLONE_CONFIG_DEEPNC_TYPE: webdav
+          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
         labels:
           HAPROXY_GROUP: "external"
         priviliged: false
@@ -84,7 +69,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "deephdc/deep-oc-plants-classification-tf"
+          file: "deephdc/deep-oc-mods"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     marathon_load_balancer_ips:

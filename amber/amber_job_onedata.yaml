@@ -4,7 +4,7 @@ imports:
  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
 
 description: >
- TOSCA examples for specifying a Chronos Job that runs an application using Onedata storage.
+ TOSCA examples for specifying a Chronos Job that runs Amber application using Onedata storage.
 
 topology_template:
   inputs:

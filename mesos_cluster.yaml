@@ -11,6 +11,7 @@ topology_template:
 
     mesos_password:
       type: string
+      description: Admin password for accessing Mesos HTTP service
       required: yes
 
     marathon_password:

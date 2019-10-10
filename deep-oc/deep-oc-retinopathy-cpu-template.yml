@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: Application Docker image 
       required: yes
-      default: 'laramaktub/plant-classification-theano-train'
+      default: 'itokeiic/deep-oc-retinopathy_test'
 
     num_gpus:
       type: integer
@@ -17,13 +17,13 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: no
-      default: '/srv/deepapp/.rclone.conf'
+      default: '/srv/image-classification-tf/.rclone.conf'
 
     rclone_url:
       type: string
       description: nextcloud link to access via webdav
       required: no
-      default: ''
+      default: 'https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/'
 
     rclone_vendor:
       type: string
@@ -37,7 +37,7 @@ topology_template:
       required: no
       default: ''
 
-    rclone_pass:
+    rclone_password:
       type: string
       description: rclone user password
       required: no
@@ -53,6 +53,8 @@ topology_template:
             publish_ports:
             - protocol: 'tcp'
               source: 5000
+            - protocol: 'tcp'
+              source: 6006
             mem_size: '4096 MB'
             num_cpus: 1
             num_gpus: { get_input: num_gpus }
@@ -68,11 +70,11 @@ topology_template:
         command: 'deepaas-run --listen-ip 0.0.0.0'
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
+          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
         labels:
           HAPROXY_GROUP: 'external'
         priviliged: false

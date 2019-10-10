@@ -3,9 +3,9 @@ topology_template:
 
     docker_image:
       type: string
-      description: 'deephdc/deep-oc-mods'
+      description: 'deep-oc-plants-classification-tf:gpu'
       required: yes
-      default: "deephdc/deep-oc-mods"
+      default: "deephdc/deep-oc-plants-classification-tf:gpu"
 
     mem_size:
       type: string
@@ -17,13 +17,13 @@ topology_template:
       type: integer
       description: Number of required CPUs
       required: no
-      default: 1
+      default: 0
 
     num_gpus:
       type: integer
       description: Number of required GPUs
       required: no
-      default: 0
+      default: 1
 
     flaat_disable:
       type: string
@@ -35,7 +35,7 @@ topology_template:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/.rclone.conf"
+      default: "/srv/plant-classification-tf-train/.rclone.conf"
 
     rclone_url:
       type: string
@@ -77,7 +77,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0"
+      default: "/srv/.jupyter/run_jupyter.sh --allow-root"
 
   node_templates:
     Docker:
@@ -108,16 +108,19 @@ topology_template:
         command: { get_input: run_command }
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
+          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
+          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
+        portDefinitions:
+        - port: 0
+          requirePorts: true
         priviliged: false
       requirements:
       - host:
@@ -144,3 +147,4 @@ topology_template:
 tosca_definitions_version: "tosca_simple_yaml_1_0"
 imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml"
+
