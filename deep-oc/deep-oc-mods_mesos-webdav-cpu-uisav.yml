@@ -5,6 +5,7 @@ topology_template:
       type: string
       description: 'deephdc/deep-oc-mods'
       required: yes
+      default: "deephdc/deep-oc-mods"
 
     mem_size:
       type: string
@@ -54,13 +55,13 @@ topology_template:
       required: no
       default: ""
 
-    rclone_pass:
+    rclone_password:
       type: string
       description: rclone user password
       required: no
       default: ""
 
-    jupyter_pass:
+    jupyter_password:
       type: string
       description: jupyter password
       required: no
@@ -111,9 +112,9 @@ topology_template:
           RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
           RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_pass }
+          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
-          jupyterPASSWORD: {get_input: jupyter_pass}
+          jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
