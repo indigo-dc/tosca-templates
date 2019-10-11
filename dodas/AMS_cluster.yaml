@@ -152,6 +152,8 @@ topology_template:
         marathon_password: { get_input: marathon_password }
         master_ips: { get_attribute: [ mesos-master-server, private_address ] }
         ams_default_squid: { get_attribute: [ mesos-lb-server, private_address, 0 ] }
+        htcondor_config_ccb_ip: { get_attribute: [ mesos-ccb-server, private_address, 0 ] }
+        htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
       requirements:
         - host: mesos_master
 
