@@ -128,6 +128,7 @@ topology_template:
         lb_ips: { get_attribute: [ mesos-lb-server, private_address ] }
         htcondor_config_schedd_ip_pub: { get_attribute: [ mesos-slaveschedd-server, public_address, 0 ] }
         htcondor_config_schedd_ip: { get_attribute: [ mesos-slaveschedd-server, private_address, 0 ] }
+        htcondor_config_ccb_ip_pub: { get_attribute: [ mesos-ccb-server, public_address, 0 ] }
         htcondor_config_ccb_ip: { get_attribute: [ mesos-ccb-server, private_address, 0 ] }
         config_mode: "master"
         htcondor_config_condor_image: "dodasts/htcondor:dciangotdev"
