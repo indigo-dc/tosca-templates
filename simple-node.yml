@@ -1,0 +1,82 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml
+
+description: >
+  Launch a compute node getting the IP and SSH credentials to access via ssh
+
+metadata:
+  display_name: Start a virtual machine
+  icon: https://indigo-paas.cloud.ba.infn.it/public/images/vm-icon.png
+
+topology_template:
+
+  inputs:        
+    num_cpus:
+      type: integer
+      description: Number of virtual cpus for the VM
+      default: 1
+      constraints:
+      - valid_values: [ 1, 2, 4 ]
+    mem_size:
+      type: scalar-unit.size
+      description: Amount of memory for the VM
+      default: 2 GB
+      constraints:
+      - valid_values: [ 2 GB, 4 GB ]  
+
+    num_instances:
+      type: integer
+      description: Number of VMs to be spawned
+      default: 1      
+
+    os_distribution: 
+      type: string
+      default: ubuntu
+      description: Operating System distro - valid values ubuntu, centos 
+ 
+    zabbix_server:
+      type: string
+      description: IP or DNS name of the Zabbix server
+      required: no
+      default: ""
+
+    zabbix_metadata:
+      type: string
+      description: Host metadata to be sent to the Zabbix server
+      required: no
+      default: ""
+
+  node_templates:
+
+    simple_node:
+      type: tosca.nodes.indigo.Compute
+      properties:
+        zabbix_server: { get_input: zabbix_server }
+        zabbix_server_metadata: { get_input: zabbix_metadata } 
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+        scalable:
+          properties:
+            count: { get_input: num_instances }
+        host:
+          properties:
+            #instance_type: m1.small
+            num_cpus: { get_input: num_cpus }
+            mem_size: { get_input: mem_size }
+        os:
+          properties:
+            #image: ubuntu-16.04
+            distribution: { get_input: os_distribution }
+            #type: linux
+
+  outputs:
+    node_ip:
+      value: { get_attribute: [ simple_node, public_address, 0 ] }
+    node_creds:
+      value: { get_attribute: [ simple_node, endpoint, credential, 0 ] }
+
+
