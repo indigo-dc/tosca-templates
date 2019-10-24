@@ -1,35 +1,55 @@
+tosca_definitions_version: "tosca_simple_yaml_1_0"
+
+imports:
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml"
+
+description: A trained network to super resolve low resolution bands to high resolution in multispectral satellite imagery (Sentinel-2)
+
+metadata:
+  display_name: Sentinel-2 super-resolution module
+  icon: https://raw.githubusercontent.com/deephdc/DEEP-OC-satsr/master/images/satsr.png
+  tag: GPU
+ 
+
 topology_template:
   inputs:
  
     rclone_conf:
       type: string
       description: nextcloud link to access via webdav
-      required: yes
+      required: no
       default: "/srv/plant-classification-tf-train/.rclone.conf"
  
     rclone_url:
       type: string
       description: nextcloud link to access via webdav
-      required: yes
+      required: no
       default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
  
     rclone_vendor:
       type: string
       description: rclone vendor
-      required: yes
+      required: no
       default: "nextcloud"
    
     rclone_user:
       type: string
       description: rclone user to access nextcloud
-      required: yes
+      required: no
       default: ""
  
     rclone_password:
       type: string
       description: rclone user password
-      required: yes
+      required: no
       default: ""
+
+    enable_https:
+      type: boolean
+      description: enable https for the service endpoint
+      required: no
+      default: false
+
  
   node_templates:
     Docker:
@@ -52,6 +72,7 @@ topology_template:
     marathon:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
+        enable_https: { get_input: enable_https }
         force_pull_image: true
         command: "deepaas-run --listen-ip 0.0.0.0 --listen-port $PORT0"
         environment_variables:
@@ -61,9 +82,7 @@ topology_template:
           RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
           RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
-        labels:
-          HAPROXY_GROUP: "external"
-        priviliged: false
+        privileged: false
       requirements:
       - host:
           node: "Docker"
@@ -74,12 +93,5 @@ topology_template:
           file: "deephdc/deep-oc-sen2sr:gpu"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
-    marathon_load_balancer_ips:
-      value: { get_attribute: [ marathon, load_balancer_ips ] }
-    Docker_host_publish_ports:
-      value: { get_property: [ Docker, host, publish_ports ] }
     endpoint:
-      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
-tosca_definitions_version: "tosca_simple_yaml_1_0"
-imports:
-- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml"
+      value:  { concat: [ 'http(s)://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }

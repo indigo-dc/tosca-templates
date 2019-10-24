@@ -1,33 +1,43 @@
+tosca_definitions_version: "tosca_simple_yaml_1_0"
+imports:
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml"
+
+description: This test application applies Transfer learning for dog's breed identification, which is implemented by means of Tensorflow and Keras
+
+metadata:
+  display_name: Dogs breed detection
+  icon: https://github.com/indigo-dc/tosca-templates/raw/v4.0.0/deep-oc/images/dogs_breed_detection_module.png
+
 topology_template:
   inputs:
 
     rclone_conf:
       type: string
       description: nextcloud link to access via webdav
-      required: yes
+      required: no
       default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
       description: nextcloud link to access via webdav
-      required: yes
+      required: no
 
     rclone_vendor:
       type: string
       description: rclone vendor
-      required: yes
+      required: no
       default: "nextcloud"
   
     rclone_user:
       type: string
       description: rclone user to access nextcloud
-      required: yes
+      required: no
       default: ""
 
     rclone_password:
       type: string
       description: rclone user password
-      required: yes
+      required: no
       default: ""
 
   node_templates:
@@ -59,9 +69,7 @@ topology_template:
           RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
           RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
-        labels:
-          HAPROXY_GROUP: "external"
-        priviliged: false
+        privileged: false
       requirements:
       - host:
           node: "Docker"
@@ -72,20 +80,5 @@ topology_template:
           file: "vykozlov/deep-oc-dogs_breed_det:cpu"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
-    marathon_load_balancer_ips:
-      value: { get_attribute: [ marathon, load_balancer_ips ] }
-    Docker_image:
-      value: { get_input: docker_image }
-    Docker_num_cpus:
-      value: { get_property: [ Docker, host, num_cpus ] }
-    Docker_num_gpus:
-      value: { get_property: [ Docker, host, num_gpus ] }
-    command:
-      value: { get_property: [ marathon, command ] }
-    Docker_host_publish_ports:
-      value: { get_property: [ Docker, host, publish_ports ] }
     endpoint:
-      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
-tosca_definitions_version: "tosca_simple_yaml_1_0"
-imports:
-- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml"
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
