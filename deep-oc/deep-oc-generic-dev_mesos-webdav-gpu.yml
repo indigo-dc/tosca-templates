@@ -118,9 +118,6 @@ topology_template:
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
-        # portDefinitions:
-        # - port: 0
-        #   requirePorts: true
         privileged: false
       requirements:
       - host:
