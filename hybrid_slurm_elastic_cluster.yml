@@ -64,6 +64,7 @@ topology_template:
       requirements:
         - lrms: lrms_front_end
         - wn: wn_node
+        - host: lrms_server
 
     lrms_front_end:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Slurm
@@ -103,8 +104,9 @@ topology_template:
       capabilities:
         wn:
           properties:
+            min_instances: 1
             max_instances: { get_input: wn_num }
-            min_instances: 0
+            default_instances: 1
       requirements:
         - host: lrms_wn
 
