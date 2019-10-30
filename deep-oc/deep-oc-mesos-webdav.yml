@@ -53,7 +53,7 @@ topology_template:
       description: rclone vendor
       required: no
       default: "nextcloud"
-  
+
     rclone_user:
       type: string
       description: rclone user to access remote storage
@@ -123,7 +123,7 @@ topology_template:
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
-        priviliged: { get_input: docker_privileged }
+        privileged: { get_input: docker_privileged }
       requirements:
       - host:
           node: "Docker"
