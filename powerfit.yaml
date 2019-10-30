@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml
 
 description: TOSCA template for deploying an instance for Powerfit
 
@@ -21,9 +21,9 @@ topology_template:
     powerfit:
       type: tosca.nodes.indigo.Powerfit
       requirements:
-        - host: powerfit-server
- 
-    powerfit-server:
+        - host: powerfit_server
+
+    powerfit_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -39,13 +39,13 @@ topology_template:
            mem_size: { get_input: memory_size }
         os:
           properties:
-            type: linux 
-            distribution: ubuntu 
+            type: linux
+            distribution: ubuntu
             version: 16.04
             image: indigodatacloudapps/powerfit
 
   outputs:
     instance_ip:
-      value: { get_attribute: [ powerfit-server, public_address, 0 ] }
+      value: { get_attribute: [ powerfit_server, public_address, 0 ] }
     instance_creds:
-      value: { get_attribute: [ powerfit-server, endpoint, credential, 0 ] }
+      value: { get_attribute: [ powerfit_server, endpoint, credential, 0 ] }
