@@ -77,7 +77,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "/srv/.jupyter/run_jupyter.sh --allow-root"
+      default: "/run_jupyter.sh --allow-root"
 
   node_templates:
     Docker:
