@@ -77,7 +77,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "/run_jupyter.sh --allow-root"
+      default: "jupyterPORT=$PORT2 /run_jupyter.sh --allow-root"
 
   node_templates:
     Docker:
