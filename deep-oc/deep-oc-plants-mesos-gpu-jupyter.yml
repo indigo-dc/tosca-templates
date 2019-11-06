@@ -35,7 +35,7 @@ topology_template:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/.rclone/rclone.conf"
+      default: "/srv/image-classification-tf/.rclone.conf"
 
     rclone_url:
       type: string
