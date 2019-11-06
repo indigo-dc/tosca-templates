@@ -25,7 +25,7 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: yes
-      default: "/srv/.rclone/rclone.conf"
+      default: "/srv/image-classification-tf/.rclone.conf"
  
     rclone_url:
       type: string
