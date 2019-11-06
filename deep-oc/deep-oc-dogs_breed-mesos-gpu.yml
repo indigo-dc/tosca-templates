@@ -5,7 +5,7 @@ topology_template:
       type: string
       description: docker image from Docker Hub to deploy
       required: yes
-      default: "deephdc/deep-oc-dogs_breed_det:gpu-test"
+      default: "deephdc/deep-oc-dogs_breed_det:gpu"
 
     docker_privileged:
       type: string
@@ -83,7 +83,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "/srv/.debug_log/debug_log.sh --deepaas_port=$PORT0 --remote_dir=rshare:/Logs/"
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
 
   node_templates:
     Docker:
