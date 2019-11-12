@@ -92,7 +92,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
     Docker:
