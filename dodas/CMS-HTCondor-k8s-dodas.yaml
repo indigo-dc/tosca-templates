@@ -19,7 +19,7 @@ topology_template:
 
     mem_size_master:
       type: string
-      default: "4 GB"
+      default: "8 GB"
 
     number_of_slaves:
       type: integer
@@ -35,26 +35,26 @@ topology_template:
 
     server_image:
       type: string
-      default: "ost://cloud.recas.ba.infn.it/8f667fbc-40bf-45b8-b22d-40f05b48d060"
+      default: "ost://horizon.cloud.cnaf.infn.it/3d993ab8-5d7b-4362-8fd6-af1391edca39"
 
 ####
 # IAM related configurations to enable the OIDC to X.509 certificate translation
     iam_token:
       type: string
-      default: "DODAS-IAM.Token"
+      default: "DUMMY"
 
     iam_client_id:
       type: string
-      default: "IAM-Client-ID"
+      default: "DUMMY" 
 
     iam_client_secret:
       type: string
-      default: "IAM-Client-Secret"
+      default: "DUMMY" 
 
 # CMS specific configurations 
     cms_local_site:
       type: string
-      default: "T3_IT_Opportunistic_dodas"
+      default: "T3_IT_Opportunistic_xcache"
       
     cms_stageoutsite:
       type: string
@@ -74,7 +74,7 @@ topology_template:
 
     cms_xrd_readserver:
       type: string
-      default: "xrootd.ba.infn.it"
+      default: "DUMMY"
 
 # DODAS-Monitoring specific params (NOTE this is optional)
     monitordb_ip:
@@ -86,6 +86,64 @@ topology_template:
       default: "ES-secret"
 
   node_templates:
+
+    k8s_master:
+      type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
+      properties:
+        admin_token: testme
+        kube_version: 1.14.0
+      requirements:
+        - host: k8s-master-server
+
+    k8s_slave:
+      type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
+      properties:
+        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        kube_version: 1.14.0
+      requirements:
+        - host: k8s-slave-server
+
+    k8s-master-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PUBLIC
+            ports:
+              kube_port:
+                protocol: tcp
+                source: 30443
+              # kube_nfs:
+              #  protocol: tcp
+              #  source: 2049
+        scalable:
+          properties:
+            count: { get_input: number_of_masters }
+        host:
+          properties:
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    k8s-slave-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: PRIVATE
+        scalable:
+          properties:
+            count: { get_input: number_of_slaves }
+        host:
+          properties:
+            # instance_type:  m1.medium
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave } 
+        os:
+          properties:
+            image: { get_input: server_image }
 
     cms_wn:
       type: tosca.nodes.indigo.CmsWnConfig
@@ -119,62 +177,6 @@ topology_template:
         - host: k8s_master
 
 
-    k8s_master:
-      type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
-      properties:
-        admin_token: testme
-        kube_version: 1.14.0
-      requirements:
-        - host: k8s-master-server
-
-    k8s_slave:
-      type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
-      properties:
-        front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
-        kube_version: 1.14.0
-      requirements:
-        - host: k8s-slave-server
-
-    k8s-master-server:
-      type: tosca.nodes.indigo.Compute
-      capabilities:
-        endpoint:
-          properties:
-            network_name: PUBLIC
-            ports:
-              kube_port:
-                protocol: tcp
-                source: 30443
-              kube_nfs:
-                protocol: tcp
-                source: 2049
-        scalable:
-          properties:
-            count: { get_input: number_of_masters }
-        host:
-          properties:
-            num_cpus: { get_input: num_cpus_master }
-            mem_size: { get_input: mem_size_master } 
-        os:
-          properties:
-            image: { get_input: server_image }
-
-    k8s-slave-server:
-      type: tosca.nodes.indigo.Compute
-      capabilities:
-        endpoint:
-          properties:
-            network_name: PUBLIC
-        scalable:
-          properties:
-            count: { get_input: number_of_slaves }
-        host:
-          properties:
-            num_cpus: { get_input: num_cpus_slave }
-            mem_size: { get_input: mem_size_slave } 
-        os:
-          properties:
-            image: { get_input: server_image }
 
   outputs:
     k8s_endpoint:
