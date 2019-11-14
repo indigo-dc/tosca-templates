@@ -1,0 +1,238 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/k8s/custom_types.yaml
+
+description: TOSCA template for a complete CMS computing cluster on top of K8s orchestrator
+
+topology_template:
+
+  inputs:
+
+    number_of_masters:
+      type: integer
+      default: 1
+
+    num_cpus_master: 
+      type: integer
+      default: 4
+
+    mem_size_master:
+      type: string
+      default: "8 GB"
+
+    number_of_slaves:
+      type: integer
+      default: 1 
+
+    num_cpus_slave: 
+      type: integer
+      default: 4
+
+    mem_size_slave:
+      type: string
+      default: "8 GB"
+
+    server_image:
+      type: string
+      default: "ost://openstack.fisica.unipg.it/cb87a2ac-5469-4bd5-9cce-9682c798b4e4"
+
+    iam_token:
+      type: string
+      default: "DUMMY"
+
+    iam_client_id:
+      type: string
+      default: "DUMMY" 
+
+    iam_client_secret:
+      type: string
+      default: "DUMMY" 
+
+    proxycache_image:
+      type: string
+      default: "dodasts/ttscache:authmap"
+
+    admin_DN:
+      type: string
+      default: "DUMMY" 
+
+  node_templates:
+
+    k8s_master:
+      type: tosca.nodes.indigo.LRMS.FrontEnd.Kubernetes
+      properties:
+        admin_token: testme
+        kube_version: 1.14.0
+      requirements:
+        - host: k8s-master-server
+
+    k8s_ccb:
+      type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
+      properties:
+        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        kube_version: 1.14.0
+        #kubelet_extra_args: "--node-labels condor=ccb"
+      requirements:
+        - host: k8s-collector-server
+
+    k8s_schedd:
+      type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
+      properties:
+        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        kube_version: 1.14.0
+        #kubelet_extra_args: "--node-labels condor=schedd"
+      requirements:
+        - host: k8s-schedd-server
+
+    k8s_wn:
+      type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
+      properties:
+        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        kube_version: 1.14.0
+      requirements:
+        - host: k8s-slave-server
+
+    k8s-master-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: infn-farm.PUBLIC
+            #network_name: PUBLIC
+            ports:
+              kube_port:
+                protocol: tcp
+                source: 30443
+        scalable:
+          properties:
+            count: { get_input: number_of_masters }
+        host:
+          properties:
+            instance_type:  m1.medium
+            #num_cpus: { get_input: num_cpus_master }
+            #mem_size: { get_input: mem_size_master } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    k8s-collector-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            #network_name: k8s-private.PRIVATE
+            #network_name: PRIVATE
+            #network_name: PUBLIC 
+            network_name: infn-farm.PUBLIC
+            ports:
+              collector:
+                protocol: tcp
+                source: 9618
+        scalable:
+          properties:
+            count: 1 
+        host:
+          properties:
+            instance_type:  m1.medium
+            #num_cpus: { get_input: num_cpus_slave }
+            #mem_size: { get_input: mem_size_slave } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    k8s-schedd-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            #network_name: PUBLIC 
+            network_name: infn-farm.PUBLIC
+            ports:
+              schedd:
+                protocol: tcp
+                source: 9618
+        scalable:
+          properties:
+            count: 1 
+        host:
+          properties:
+            instance_type:  m1.medium
+            #num_cpus: { get_input: num_cpus_slave }
+            #mem_size: { get_input: mem_size_slave } 
+        os:
+          properties:
+            image: { get_input: server_image }
+
+    k8s-slave-server:
+      type: tosca.nodes.indigo.Compute
+      capabilities:
+        endpoint:
+          properties:
+            network_name: k8s-private.PRIVATE
+            #network_name: PRIVATE
+            #network_name: PUBLIC 
+        scalable:
+          properties:
+            count: { get_input: number_of_slaves }
+        host:
+          properties:
+            instance_type:  m1.medium
+            #num_cpus: { get_input: num_cpus_slave }
+            #mem_size: { get_input: mem_size_slave } 
+        os:
+          properties:
+            #image: { get_input: server_image }
+            #image: "ost://openstack.fisica.unipg.it/1c334195-3203-43cb-b13f-d3159304a6d6"
+            image: "ost://openstack.fisica.unipg.it/d9a41aed-3ebf-42f9-992e-ef0078d3de95"
+ 
+
+    htcondor_client:
+      type: tosca.nodes.indigo.HTCondorClient
+      properties:
+        condor_host: { get_attribute: [ k8s-collector-server, public_address, 0 ]} 
+        schedd_name: { get_attribute: [ k8s-schedd-server, public_address, 0 ] }
+        iam_client_id: { get_input: iam_client_id }
+        iam_client_secret: { get_input: iam_client_secret }
+        iam_access_token: { get_input: iam_token }
+        admin_DN: ""
+      requirements:
+        - host: k8s_master
+        - dependency: htcondor_services
+
+    htcondor_services:
+      type: tosca.nodes.indigo.HTCondorServices
+      properties:        
+        marathon_username: "" 
+        marathon_password: "" 
+        #hostname_ccb: { get_attribute: [ k8s-collector-server, tosca_name ]}
+        #hostname_schedd: { get_attribute: [ k8s-schedd-server, tosca_name ]}
+        htcondor_config_condor_host: { get_attribute: [ k8s-collector-server, private_address, 0 ]} 
+        htcondor_config_ccb_address: { get_attribute: [ k8s-collector-server, public_address, 0 ]}
+        htcondor_config_high_port: "32048"
+        htcondor_config_low_port: "31024"
+        htcondor_config_schedd_ip_pub: { get_attribute: [ k8s-schedd-server, public_address, 0 ] }
+        htcondor_config_schedd_ip: { get_attribute: [ k8s-schedd-server, private_address, 0 ] }
+        htcondor_config_ccb_ip: { get_attribute: [ k8s-collector-server, private_address, 0 ] }
+        master_ips: [] 
+        lb_ips: []
+        config_mode: "k8s"
+        htcondor_config_condor_image: "dodasts/ams:v1.0.0.rc1"
+        proxycache_host: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        iam_access_token: { get_input: iam_token }
+        iam_client_id: { get_input: iam_client_id }
+        iam_client_secret: { get_input: iam_client_secret }
+        proxycache_image: { get_input: proxycache_image }
+      requirements:
+        - host: k8s_master
+        - dependency: k8s_ccb
+        - dependency: k8s_schedd
+        - dependency: k8s_wn
+
+
+  outputs:
+    k8s_endpoint:
+      value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
