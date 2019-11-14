@@ -190,19 +190,6 @@ topology_template:
             image: "ost://openstack.fisica.unipg.it/d9a41aed-3ebf-42f9-992e-ef0078d3de95"
  
 
-    htcondor_client:
-      type: tosca.nodes.indigo.HTCondorClient
-      properties:
-        condor_host: { get_attribute: [ k8s-collector-server, public_address, 0 ]} 
-        schedd_name: { get_attribute: [ k8s-schedd-server, public_address, 0 ] }
-        iam_client_id: { get_input: iam_client_id }
-        iam_client_secret: { get_input: iam_client_secret }
-        iam_access_token: { get_input: iam_token }
-        admin_DN: ""
-      requirements:
-        - host: k8s_master
-        - dependency: htcondor_services
-
     htcondor_services:
       type: tosca.nodes.indigo.HTCondorServices
       properties:        
