@@ -65,38 +65,38 @@ topology_template:
         admin_token: testme
         kube_version: 1.14.0
       requirements:
-        - host: k8s-master-server
+        - host: k8s_master_server
 
     k8s_ccb:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
-        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
         #kubelet_extra_args: "--node-labels condor=ccb"
       requirements:
-        - host: k8s-collector-server
+        - host: k8s_collector_server
 
     k8s_schedd:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
-        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
         #kubelet_extra_args: "--node-labels condor=schedd"
       requirements:
-        - host: k8s-schedd-server
+        - host: k8s_schedd_server
 
     k8s_wn:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
-        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
+        front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
+        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
       requirements:
-        - host: k8s-slave-server
+        - host: k8s_slave_server
 
-    k8s-master-server:
+    k8s_master_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -119,7 +119,7 @@ topology_template:
           properties:
             image: { get_input: server_image }
 
-    k8s-collector-server:
+    k8s_collector_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -144,7 +144,7 @@ topology_template:
           properties:
             image: { get_input: server_image }
 
-    k8s-schedd-server:
+    k8s_schedd_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -167,7 +167,7 @@ topology_template:
           properties:
             image: { get_input: server_image }
 
-    k8s-slave-server:
+    k8s_slave_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -195,20 +195,20 @@ topology_template:
       properties:        
         marathon_username: "" 
         marathon_password: "" 
-        #hostname_ccb: { get_attribute: [ k8s-collector-server, tosca_name ]}
-        #hostname_schedd: { get_attribute: [ k8s-schedd-server, tosca_name ]}
-        htcondor_config_condor_host: { get_attribute: [ k8s-collector-server, private_address, 0 ]} 
-        htcondor_config_ccb_address: { get_attribute: [ k8s-collector-server, public_address, 0 ]}
+        #hostname_ccb: { get_attribute: [ k8s_collector_server, tosca_name ]}
+        #hostname_schedd: { get_attribute: [ k8s_schedd_server, tosca_name ]}
+        htcondor_config_condor_host: { get_attribute: [ k8s_collector_server, private_address, 0 ]} 
+        htcondor_config_ccb_address: { get_attribute: [ k8s_collector_server, public_address, 0 ]}
         htcondor_config_high_port: "32048"
         htcondor_config_low_port: "31024"
-        htcondor_config_schedd_ip_pub: { get_attribute: [ k8s-schedd-server, public_address, 0 ] }
-        htcondor_config_schedd_ip: { get_attribute: [ k8s-schedd-server, private_address, 0 ] }
-        htcondor_config_ccb_ip: { get_attribute: [ k8s-collector-server, private_address, 0 ] }
+        htcondor_config_schedd_ip_pub: { get_attribute: [ k8s_schedd_server, public_address, 0 ] }
+        htcondor_config_schedd_ip: { get_attribute: [ k8s_schedd_server, private_address, 0 ] }
+        htcondor_config_ccb_ip: { get_attribute: [ k8s_collector_server, private_address, 0 ] }
         master_ips: [] 
         lb_ips: []
         config_mode: "k8s"
         htcondor_config_condor_image: "dodasts/ams:v1.0.0.rc1"
-        proxycache_host: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        proxycache_host: { get_attribute: [ k8s_master_server, private_address, 0 ] }
         iam_access_token: { get_input: iam_token }
         iam_client_id: { get_input: iam_client_id }
         iam_client_secret: { get_input: iam_client_secret }
@@ -222,4 +222,4 @@ topology_template:
 
   outputs:
     k8s_endpoint:
-      value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
+      value: { concat: [ 'https://', get_attribute: [ k8s_master_server, public_address, 0 ], ':30443' ] }

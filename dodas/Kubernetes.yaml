@@ -46,18 +46,18 @@ topology_template:
         admin_token: testme
         kube_version: 1.14.0
       requirements:
-        - host: k8s-master-server
+        - host: k8s_master_server
 
     k8s_slave:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
-        front_end_ip: { get_attribute: [ k8s-master-server, private_address, 0 ] }
+        front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
         #front_end_ip: { get_attribute: [ k8s-master-server, public_address, 0 ] }
         kube_version: 1.14.0
       requirements:
-        - host: k8s-slave-server
+        - host: k8s_slave_server
 
-    k8s-master-server:
+    k8s_master_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -80,7 +80,7 @@ topology_template:
           properties:
             image: { get_input: server_image }
 
-    k8s-slave-server:
+    k8s_slave_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
         endpoint:
@@ -102,4 +102,4 @@ topology_template:
 
   outputs:
     k8s_endpoint:
-      value: { concat: [ 'https://', get_attribute: [ k8s-master-server, public_address, 0 ], ':30443' ] }
+      value: { concat: [ 'https://', get_attribute: [ k8s_master_server, public_address, 0 ], ':30443' ] }
