@@ -180,7 +180,9 @@ topology_template:
       type: tosca.nodes.indigo.HTCondorServices
       properties:        
         marathon_username: "" 
-        marathon_password: "" 
+        marathon_password: ""
+        hostname_ccb: ccb
+        hostname_schedd: schedd
         htcondor_config_condor_host: { get_attribute: [ k8s_collector_server, private_address, 0 ]} 
         htcondor_config_ccb_address: { get_attribute: [ k8s_collector_server, public_address, 0 ]}
         htcondor_config_high_port: "32048"
