@@ -33,9 +33,13 @@ topology_template:
       type: string
       default: "8 GB"
 
+    server_image_slave:
+      type: string
+      default: "ost://cloud.recas.ba.infn.it/1113d7e8-fc5d-43b9-8d26-61906d89d479"
+
     server_image:
       type: string
-      default: "ost://openstack.fisica.unipg.it/cb87a2ac-5469-4bd5-9cce-9682c798b4e4"
+      default: "ost://cloud.recas.ba.infn.it/1113d7e8-fc5d-43b9-8d26-61906d89d479"
 
     iam_token:
       type: string
@@ -53,10 +57,6 @@ topology_template:
       type: string
       default: "dodasts/ttscache:authmap"
 
-    admin_DN:
-      type: string
-      default: "DUMMY" 
-
   node_templates:
 
     k8s_master:
@@ -70,20 +70,20 @@ topology_template:
     k8s_ccb:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
+        node_name: ccb
         front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
-        #kubelet_extra_args: "--node-labels condor=ccb"
+        kubelet_extra_args: "--node-labels condor=ccb"
       requirements:
         - host: k8s_collector_server
 
     k8s_schedd:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
+        node_name: schedd
         front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
-        #kubelet_extra_args: "--node-labels condor=schedd"
+        kubelet_extra_args: "--node-labels condor=schedd"
       requirements:
         - host: k8s_schedd_server
 
@@ -91,7 +91,6 @@ topology_template:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Kubernetes 
       properties:
         front_end_ip: { get_attribute: [ k8s_master_server, private_address, 0 ] }
-        #front_end_ip: { get_attribute: [ k8s_master_server, public_address, 0 ] }
         kube_version: 1.14.0
       requirements:
         - host: k8s_slave_server
@@ -101,8 +100,7 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            network_name: infn-farm.PUBLIC
-            #network_name: PUBLIC
+            network_name: PUBLIC
             ports:
               kube_port:
                 protocol: tcp
@@ -112,9 +110,8 @@ topology_template:
             count: { get_input: number_of_masters }
         host:
           properties:
-            instance_type:  m1.medium
-            #num_cpus: { get_input: num_cpus_master }
-            #mem_size: { get_input: mem_size_master } 
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master } 
         os:
           properties:
             image: { get_input: server_image }
@@ -124,10 +121,7 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            #network_name: k8s-private.PRIVATE
-            #network_name: PRIVATE
-            #network_name: PUBLIC 
-            network_name: infn-farm.PUBLIC
+            network_name: PUBLIC 
             ports:
               collector:
                 protocol: tcp
@@ -137,9 +131,8 @@ topology_template:
             count: 1 
         host:
           properties:
-            instance_type:  m1.medium
-            #num_cpus: { get_input: num_cpus_slave }
-            #mem_size: { get_input: mem_size_slave } 
+            num_cpus: { get_input: num_cpus_master }
+            mem_size: { get_input: mem_size_master } 
         os:
           properties:
             image: { get_input: server_image }
@@ -149,8 +142,7 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            #network_name: PUBLIC 
-            network_name: infn-farm.PUBLIC
+            network_name: PUBLIC 
             ports:
               schedd:
                 protocol: tcp
@@ -160,9 +152,8 @@ topology_template:
             count: 1 
         host:
           properties:
-            instance_type:  m1.medium
-            #num_cpus: { get_input: num_cpus_slave }
-            #mem_size: { get_input: mem_size_slave } 
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave } 
         os:
           properties:
             image: { get_input: server_image }
@@ -172,22 +163,17 @@ topology_template:
       capabilities:
         endpoint:
           properties:
-            network_name: k8s-private.PRIVATE
-            #network_name: PRIVATE
-            #network_name: PUBLIC 
+            network_name: PRIVATE
         scalable:
           properties:
             count: { get_input: number_of_slaves }
         host:
           properties:
-            instance_type:  m1.medium
-            #num_cpus: { get_input: num_cpus_slave }
-            #mem_size: { get_input: mem_size_slave } 
+            num_cpus: { get_input: num_cpus_slave }
+            mem_size: { get_input: mem_size_slave } 
         os:
           properties:
-            #image: { get_input: server_image }
-            #image: "ost://openstack.fisica.unipg.it/1c334195-3203-43cb-b13f-d3159304a6d6"
-            image: "ost://openstack.fisica.unipg.it/d9a41aed-3ebf-42f9-992e-ef0078d3de95"
+            image: { get_input: server_image_slave }
  
 
     htcondor_services:
@@ -195,8 +181,6 @@ topology_template:
       properties:        
         marathon_username: "" 
         marathon_password: "" 
-        #hostname_ccb: { get_attribute: [ k8s_collector_server, tosca_name ]}
-        #hostname_schedd: { get_attribute: [ k8s_schedd_server, tosca_name ]}
         htcondor_config_condor_host: { get_attribute: [ k8s_collector_server, private_address, 0 ]} 
         htcondor_config_ccb_address: { get_attribute: [ k8s_collector_server, public_address, 0 ]}
         htcondor_config_high_port: "32048"
