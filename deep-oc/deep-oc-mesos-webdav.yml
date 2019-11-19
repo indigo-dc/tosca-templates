@@ -145,15 +145,15 @@ topology_template:
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     Docker_host_publish_ports:
-      value: { get_property: [ Docker, host, publish_ports ] }
+      value: { get_attribute: [ Docker, host, publish_ports ] }
     Docker_image:
       value: { get_input: docker_image }
     Docker_num_cpus:
-      value: { get_property: [ Docker, host, num_cpus ] }
+      value: { get_input: [ Docker, host, num_cpus ] }
     Docker_num_gpus:
-      value: { get_property: [ Docker, host, num_gpus ] }
+      value: { get_input: [ Docker, host, num_gpus ] }
     command:
-      value: { get_property: [ marathon, command ] }
+      value: { get_input: [ marathon, command ] }
     deepaas_endpoint:
       value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
