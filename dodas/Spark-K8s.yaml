@@ -90,6 +90,9 @@ topology_template:
               kube_port:
                 protocol: tcp
                 source: 6443
+              dashboard_port:
+                protocol: tcp
+                source: 30443
               web_ui:
                 protocol: tcp
                 source: 30808
