@@ -149,11 +149,11 @@ topology_template:
     Docker_image:
       value: { get_input: docker_image }
     Docker_num_cpus:
-      value: { get_input: [ Docker, host, num_cpus ] }
+      value: { get_input: num_cpus }
     Docker_num_gpus:
-      value: { get_input: [ Docker, host, num_gpus ] }
+      value: { get_input: num_gpus }
     command:
-      value: { get_input: [ marathon, command ] }
+      value: { get_input: run_command }
     deepaas_endpoint:
       value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
