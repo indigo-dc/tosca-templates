@@ -115,11 +115,11 @@ topology_template:
         command: { get_input: run_command }
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_RSHARE_TYPE: webdav
-          RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
+          RCLONE_CONFIG_DEEPNC_TYPE: webdav
+          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
