@@ -133,8 +133,6 @@ topology_template:
           file: "deephdc/deep-oc-mods:gpu"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
-    Docker_image:
-      value: { get_input: docker_image }
     Docker_num_cpus:
       value: { get_input: num_cpus }
     Docker_num_gpus:
