@@ -29,7 +29,7 @@ topology_template:
       type: string
       description: disable flaat authentication
       required: no
-      default: "no"
+      default: "yes"
 
     rclone_conf:
       type: string
