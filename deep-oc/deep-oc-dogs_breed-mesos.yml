@@ -11,9 +11,17 @@ metadata:
 
 topology_template:
   inputs:
+    docker_image:
+      type: string
+      description: Docker image to deploy (choose either CPU or GPU version)
+      required: yes
+      default: "deephdc/deep-oc-dogs_breed_det:gpu"
+      constraints:
+      - valid_values: [ "deephdc/deep-oc-dogs_breed_det:cpu", "deephdc/deep-oc-dogs_breed_det:gpu" ]
+
     num_gpus:
       type: integer
-      description: Number of required GPUs. For a CPU deployment provide "0" here
+      description: Number of required GPUs. For a CPU deployment provide '0' here
       required: yes
 
     rclone_conf:
@@ -46,6 +54,12 @@ topology_template:
       required: no
       default: ""
 
+    run_command:
+      type: string
+      description: default command to run
+      required: yes
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
+
   node_templates:
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
@@ -68,7 +82,7 @@ topology_template:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
         force_pull_image: true
-        command: "deepaas-run --listen-ip 0.0.0.0 --listen-port $PORT0"
+        command:  { get_input: run_command }
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_DEEPNC_TYPE: webdav

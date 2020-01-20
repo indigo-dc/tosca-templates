@@ -14,9 +14,11 @@ topology_template:
 
     docker_image:
       type: string
-      description: 'deephdc/deep-oc-generic-dev:tf-gpu-py36'
+      description: Docker image to deploy (choose either CPU or GPU (default) version)
       required: yes
       default: "deephdc/deep-oc-generic-dev:tf-gpu-py36"
+      constraints:
+      - valid_values: [ "deephdc/deep-oc-generic-dev:tf-py36", "deephdc/deep-oc-generic-dev:tf-gpu-py36" ]
 
     mem_size:
       type: string
@@ -32,9 +34,8 @@ topology_template:
 
     num_gpus:
       type: integer
-      description: Number of required GPUs. For a CPU deployment provide "0" here
+      description: Number of required GPUs. For a CPU deployment provide 0 here
       required: yes
-      default: 
 
     flaat_disable:
       type: string
