@@ -13,11 +13,11 @@ topology_template:
   inputs:
     docker_image:
       type: string
-      description: Docker image to deploy (choose either CPU or GPU version)
+      description: Docker image to deploy (choose either GPU (default) or CPU version)
       required: yes
       default: "deephdc/deep-oc-dogs_breed_det:gpu"
       constraints:
-      - valid_values: [ "deephdc/deep-oc-dogs_breed_det:cpu", "deephdc/deep-oc-dogs_breed_det:gpu" ]
+      - valid_values: [ "deephdc/deep-oc-dogs_breed_det:gpu", "deephdc/deep-oc-dogs_breed_det:cpu" ]
 
     num_gpus:
       type: integer
@@ -100,5 +100,5 @@ topology_template:
           file: "deephdc/deep-oc-dogs_breed_det"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
-    endpoint:
+    deepaas_endpoint:
       value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
