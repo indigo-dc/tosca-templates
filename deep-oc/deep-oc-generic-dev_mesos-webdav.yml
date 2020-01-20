@@ -34,7 +34,7 @@ topology_template:
       type: integer
       description: Number of required GPUs. For a CPU deployment provide "0" here
       required: yes
-      default: ""
+      default: 
 
     flaat_disable:
       type: string

@@ -15,7 +15,6 @@ topology_template:
       type: integer
       description: Number of required GPUs. For a CPU deployment provide "0" here
       required: yes
-      default: ""
 
     rclone_conf:
       type: string
@@ -59,7 +58,7 @@ topology_template:
               source: 5000
             mem_size: "4096 MB"
             num_cpus: 1
-            num_gpus: 1
+            num_gpus: { get_input: num_gpus }
         scalable:
           properties:
             min_instances: 1
