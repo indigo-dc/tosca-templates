@@ -2,14 +2,20 @@ tosca_definitions_version: "tosca_simple_yaml_1_0"
 imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml"
 
-description: This test application applies Transfer learning for dog's breed identification, which is implemented by means of Tensorflow and Keras
+description: This application applies Transfer learning for dog's breed identification, which is implemented by means of Tensorflow and Keras
 
 metadata:
   display_name: Dogs breed detection
   icon: https://github.com/indigo-dc/tosca-templates/raw/v4.0.0/deep-oc/images/dogs_breed_detection_module.png
+  tag: CPU/GPU
 
 topology_template:
   inputs:
+    num_gpus:
+      type: integer
+      description: Number of required GPUs. For a CPU deployment provide "0" here
+      required: yes
+      default: ""
 
     rclone_conf:
       type: string
@@ -21,6 +27,7 @@ topology_template:
       type: string
       description: nextcloud link to access via webdav
       required: no
+      default: ""
 
     rclone_vendor:
       type: string
@@ -52,6 +59,7 @@ topology_template:
               source: 5000
             mem_size: "4096 MB"
             num_cpus: 1
+            num_gpus: 1
         scalable:
           properties:
             min_instances: 1
@@ -61,7 +69,7 @@ topology_template:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
         force_pull_image: true
-        command: "deepaas-run --listen-ip 0.0.0.0"
+        command: "deepaas-run --listen-ip 0.0.0.0 --listen-port $PORT0"
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_DEEPNC_TYPE: webdav
@@ -69,7 +77,6 @@ topology_template:
           RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
           RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
-        privileged: false
       requirements:
       - host:
           node: "Docker"
@@ -77,7 +84,7 @@ topology_template:
           relationship: "tosca.relationships.HostedOn"
       artifacts:
         image:
-          file: "vykozlov/deep-oc-dogs_breed_det:cpu"
+          file: "deephdc/deep-oc-dogs_breed_det"
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
     endpoint:
