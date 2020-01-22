@@ -95,11 +95,11 @@ topology_template:
             publish_all: false
             publish_ports:
             - protocol: "tcp"
-              source: "$PORT0"
+              source: $PORT0
             - protocol: "tcp"
-              source: "$PORT1"
+              source: $PORT1
             - protocol: "tcp"
-              source: "$PORT2"
+              source: $PORT2
             mem_size: { get_input: mem_size }
             num_cpus: { get_input: num_cpus }
             num_gpus: { get_input: num_gpus }
