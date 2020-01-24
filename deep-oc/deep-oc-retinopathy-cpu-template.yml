@@ -1,23 +1,28 @@
+tosca_definitions_version: 'tosca_simple_yaml_1_0'
+imports:
+- indigo_custom_types: 'https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml'
+
+description: >
+    Classification of biomedical images (of the retina) into five disease categories or stages (from healthy to severe) using a deep learning approach. This is a TensorFlow example implementation.
+     More info at https://marketplace.deep-hybrid-datacloud.eu/modules/deep-oc-retinopathy.html
+metadata:
+  display_name: Retinopathy module
+  icon: https://github.com/indigo-dc/tosca-templates/raw/v4.0.0/deep-oc/images/retinopathy_module.png
+  
 topology_template:
   inputs:
 
     docker_image:
       type: string
       description: Application Docker image 
-      required: yes
-      default: 'itokeiic/deep-oc-retinopathy_test'
-
-    num_gpus:
-      type: integer
-      description: Number of required GPUs
       required: no
-      default: 0
+      default: 'itokeiic/deep-oc-retinopathy_test'
 
     rclone_conf:
       type: string
       description: nextcloud link to access via webdav
       required: no
-      default: '/srv/image-classification-tf/.rclone.conf'
+      default: '/srv/.rclone/rclone.conf'
 
     rclone_url:
       type: string
@@ -28,7 +33,7 @@ topology_template:
     rclone_vendor:
       type: string
       description: rclone vendor
-      required: yes
+      required: no
       default: 'nextcloud'
   
     rclone_user:
@@ -57,7 +62,6 @@ topology_template:
               source: 6006
             mem_size: '4096 MB'
             num_cpus: 1
-            num_gpus: { get_input: num_gpus }
         scalable:
           properties:
             min_instances: 1
@@ -75,9 +79,6 @@ topology_template:
           RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
           RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
-        labels:
-          HAPROXY_GROUP: 'external'
-        priviliged: false
       requirements:
       - host:
           node: 'Docker'
@@ -88,12 +89,5 @@ topology_template:
           file: { get_input: docker_image }
           type: 'tosca.artifacts.Deployment.Image.Container.Docker'
   outputs:
-    marathon_load_balancer_ips:
-      value: { get_attribute: [ marathon, load_balancer_ips ] }
-    Docker_host_publish_ports:
-      value: { get_property: [ Docker, host, publish_ports ] }
     endpoint:
       value:  { concat: [ "http://", { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
-tosca_definitions_version: 'tosca_simple_yaml_1_0'
-imports:
-- indigo_custom_types: 'https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml'

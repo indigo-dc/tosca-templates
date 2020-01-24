@@ -1,3 +1,13 @@
+tosca_definitions_version: "tosca_simple_yaml_1_0"
+imports:
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml"
+
+description: >
+            A general template to start a deployment on Marathon with access to a remote Webdav storage.
+
+metadata:
+  display_name: General template for starting a job
+
 topology_template:
   inputs:
 
@@ -53,7 +63,7 @@ topology_template:
       description: rclone vendor
       required: no
       default: "nextcloud"
-  
+
     rclone_user:
       type: string
       description: rclone user to access remote storage
@@ -82,7 +92,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0"
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
     Docker:
@@ -123,7 +133,7 @@ topology_template:
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
         labels:
           HAPROXY_GROUP: "external"
-        priviliged: { get_input: docker_privileged }
+        privileged: { get_input: docker_privileged }
       requirements:
       - host:
           node: "Docker"
@@ -134,22 +144,17 @@ topology_template:
           file: { get_input: docker_image }
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
   outputs:
-    Docker_host_publish_ports:
-      value: { get_property: [ Docker, host, publish_ports ] }
     Docker_image:
       value: { get_input: docker_image }
     Docker_num_cpus:
-      value: { get_property: [ Docker, host, num_cpus ] }
+      value: { get_input: num_cpus }
     Docker_num_gpus:
-      value: { get_property: [ Docker, host, num_gpus ] }
+      value: { get_input: num_gpus }
     command:
-      value: { get_property: [ marathon, command ] }
+      value: { get_input: run_command }
     deepaas_endpoint:
-      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
-      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
     jupyter_endpoint:
-      value:  { concat: [ { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
-tosca_definitions_version: "tosca_simple_yaml_1_0"
-imports:
-- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/devel_deep/custom_types.yaml"
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }

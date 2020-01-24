@@ -1,9 +1,13 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml
 
-description: TOSCA example for specifying a Mesos Cluster
+description: Deploy a Mesos Cluster (with Marathon and Chronos frameworks) on top of Virtual machines
+
+metadata:
+  display_name: Deploy a Mesos cluster
+  icon: https://indigo-paas.cloud.ba.infn.it/public/images/apache-mesos-icon.png
 
 topology_template:
 
@@ -19,7 +23,7 @@ topology_template:
       description: Admin password for accessing Marathon HTTP service
       required: yes
 
-    chronos_password:    
+    chronos_password:
       type: string
       description: Admin password for accessing Chronos HTTP service
       required: yes
@@ -27,7 +31,7 @@ topology_template:
     slave_num:
       type: integer
       description: Number of slave nodes in the cluster
-      default: 3
+      default: 2
       required: yes
 
     slave_cpus:
@@ -74,14 +78,18 @@ topology_template:
         front_end_ip: { get_attribute: [ mesos_master_server, private_address, 0 ] }
       requirements:
         - host: mesos_slave_server
-        
+      capabilities:
+        wn:
+          properties:
+            default_instances: 1
+
     mesos_load_balancer:
       type: tosca.nodes.indigo.MesosLoadBalancer
       properties:
         master_ips: { get_attribute: [ mesos_master_server, private_address ] }
         marathon_password: { get_input: marathon_password }
       requirements:
-        - host: mesos_lb_server        
+        - host: mesos_lb_server
 
     mesos_master_server:
       type: tosca.nodes.indigo.Compute
@@ -128,7 +136,7 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
-            
+
     mesos_lb_server:
       type: tosca.nodes.indigo.Compute
       capabilities:
@@ -153,16 +161,13 @@ topology_template:
             version: 16.04
 
   outputs:
-    mesos_lb_ips:
-      value: { get_attribute: [ mesos_lb_server, public_address ] }
-    mesos_master_ips:
-      value: { get_attribute: [ mesos_master_server, public_address ] }
     mesos_endpoint:
       value: { concat: [ 'http://', get_attribute: [ mesos_master_server, public_address, 0 ], ':5050' ] }
-    marathon_endpoint: 
+    marathon_endpoint:
       value: { concat: [ 'https://', get_attribute: [ mesos_master_server, public_address, 0 ], ':8443' ] }
-    chronos_endpoint: 
+    chronos_endpoint:
       value: { concat: [ 'https://', get_attribute: [ mesos_master_server, public_address, 0 ], ':4443' ] }
-
-      
-      
+    mesos_lb_ip:
+      value: { get_attribute: [ mesos_lb_server, public_address ] }
+    mesos_master:
+      value: { get_attribute: [ mesos_master_server, public_address ] }

@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/v3.0.1/custom_types.yaml
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/v4.0.0/custom_types.yaml
 
 description: >
   Deploy Galaxy on a single Virtual Machine installing it from scratch (SLOW).
@@ -18,7 +18,7 @@ topology_template:
     storage_size:
       type: string
       description: storage memory required for the instance
-      default: 10 GB      
+      default: 10 GB
 
     admin_email:
       type: string
@@ -112,7 +112,7 @@ topology_template:
       type: string
       description: path to store galaxy reference data
       default: /cvmfs
- 
+
   node_templates:
 
     galaxy:
@@ -162,7 +162,7 @@ topology_template:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Local
       requirements:
         - host: galaxy_server
- 
+
     galaxy_server:
       type: tosca.nodes.indigo.Compute
       capabilities:

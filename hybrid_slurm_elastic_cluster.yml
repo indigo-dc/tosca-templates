@@ -6,7 +6,12 @@ imports:
 description: >
   TOSCA test for launching a Virtual Elastic Cluster. It will launch
   a single front-end that will be in change of managing the elasticity
-  using the specified LRMS (torque, sge, slurm and condor) workload.
+  using the LRMS workload.
+
+metadata:
+  display_name: SLURM Elastic cluster
+  icon: https://github.com/indigo-dc/tosca-types/raw/master/images/slurm.png
+  tag: elastic
 
 topology_template:
   inputs:
@@ -15,56 +20,36 @@ topology_template:
       description: Maximum number of WNs in the elastic cluster
       default: 5
       required: yes
+
     fe_cpus:
       type: integer
       description: Numer of CPUs for the front-end node
       default: 1
       required: yes
+
     fe_mem:
       type: scalar-unit.size
       description: Amount of Memory for the front-end node
       default: 1 GB
       required: yes
+
     wn_cpus:
       type: integer
       description: Numer of CPUs for the WNs
       default: 1
       required: yes
+
     wn_mem:
       type: scalar-unit.size
       description: Amount of Memory for the WNs
       default: 1 GB
       required: yes
+
     hybrid:
       type: boolean
       description: Flag to specify that this cluster will work in an hybrid environment
       default: false
       required: false
-
-    admin_email:
-      type: string
-      description: email of the admin user
-      default: admin@admin.com
-    admin_api_key:
-      type: string
-      description: key to access the API with admin role
-      default: not_very_secret_api_key
-    version:
-      type: string
-      description: galaxy version to install
-      default: master
-    instance_description:
-      type: string
-      description: galaxy instance description
-      default: INDIGO Galaxy test
-    instance_key_pub:
-      type: string
-      description: galaxy instance ssh public key
-      default: your_ssh_public_key
-    export_dir:
-      type: string
-      description: path to store galaxy data
-      default: /export
 
   node_templates:
 
@@ -79,21 +64,7 @@ topology_template:
       requirements:
         - lrms: lrms_front_end
         - wn: wn_node
-        # it needs a host container
         - host: lrms_server
-
-    galaxy_portal:
-      type: tosca.nodes.indigo.GalaxyPortal
-      properties:
-        admin_email: { get_input: admin_email }
-        admin_api_key: { get_input: admin_api_key }
-        version: { get_input: version }
-        instance_description: { get_input: instance_description }
-        instance_key_pub: { get_input: instance_key_pub }
-      requirements:
-        - lrms: lrms_front_end
-        # it needs a host container
-        - host: lrms_wn
 
     lrms_front_end:
       type: tosca.nodes.indigo.LRMS.FrontEnd.Slurm
@@ -111,16 +82,18 @@ topology_template:
             dns_name: slurmserver
             network_name: PUBLIC
             ports:
-              http_port:
-                protocol: tcp
-                source: 80
+              openvpn:
+                protocol: udp
+                source: 1194
         host:
           properties:
             num_cpus: { get_input: fe_cpus }
             mem_size: { get_input: fe_mem }
         os:
           properties:
-            image: linux-ubuntu-14.04-vmi
+              distribution: ubuntu
+              type: linux
+              version: 16.04
 
     wn_node:
       type: tosca.nodes.indigo.LRMS.WorkerNode.Slurm
@@ -137,14 +110,6 @@ topology_template:
       requirements:
         - host: lrms_wn
 
-    galaxy_wn:
-      type: tosca.nodes.indigo.GalaxyWN
-      properties:
-        export_dir: { get_input: export_dir }
-        front_end_ip: { get_attribute: [ lrms_server, private_address, 0 ] }
-      requirements:
-        - host: lrms_wn
-
     lrms_wn:
       type: tosca.nodes.indigo.Compute
       capabilities:
@@ -157,12 +122,24 @@ topology_template:
             mem_size: { get_input: wn_mem }
         os:
           properties:
-            image: linux-ubuntu-14.04-vmi
+              distribution: ubuntu
+              type: linux
+              version: 16.04
 
   outputs:
-    galaxy_url:
-      value: { concat: [ 'http://', get_attribute: [ lrms_server, public_address, 0 ], '/galaxy' ] }
     cluster_ip:
       value: { get_attribute: [ lrms_server, public_address, 0 ] }
     cluster_creds:
       value: { get_attribute: [ lrms_server, endpoint, credential, 0 ] }
+
+#  policies:
+#    - deploy_on_recas:
+#        type: tosca.policies.indigo.SlaPlacement
+#        properties: { sla_id: 5da02ca5cb0eda351f5847f1 }
+#        targets: [ lrms_server ]
+
+#  policies:
+#    - deploy_on_ifca:
+#        type: tosca.policies.indigo.SlaPlacement
+#        properties: { sla_id: 5d5ec2c6cb0eda3522b4b3f6 }
+#        targets: [ lrms_server ]
