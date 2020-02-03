@@ -61,6 +61,18 @@ topology_template:
       required: no
       default: ""
 
+    oneclient_provider_host:
+      type: string
+      description: oneclient provider host
+      required: no
+      default: ""
+
+    oneclient_access_token:
+      type: string
+      description: oneclient access token
+      required: no
+      default: ""
+
     jupyter_password:
       type: string
       description: jupyter password
@@ -112,6 +124,8 @@ topology_template:
           RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
           RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
+          ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider_host }
+          ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_access_token }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
