@@ -3,10 +3,10 @@ imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
-            A general template to start a deployment on Marathon with access to a remote Webdav storage (to be removed!)
+            A general template to start a deployment on Marathon with access to a remote Webdav storage.
 
 metadata:
-  display_name: General template for starting a job (obsolete)
+  display_name: General template for starting a job
 
 topology_template:
   inputs:
