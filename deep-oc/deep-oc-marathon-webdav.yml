@@ -7,6 +7,7 @@ description: >
 
 metadata:
   display_name: General template for starting a job
+  tag: CPU/GPU
 
 topology_template:
   inputs:
@@ -45,6 +46,8 @@ topology_template:
       description: disable flaat authentication
       required: no
       default: "no"
+      constraints:
+      - valid_values: [ "no", "yes" ]
 
     rclone_conf:
       type: string

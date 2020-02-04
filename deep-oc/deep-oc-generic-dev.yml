@@ -42,12 +42,14 @@ topology_template:
       description: disable flaat authentication
       required: no
       default: "no"
+      constraints:
+      - valid_values: [ "no", "yes" ]
 
     rclone_conf:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/.rclone.conf"
+      default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
