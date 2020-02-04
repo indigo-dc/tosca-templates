@@ -47,7 +47,7 @@ topology_template:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/.rclone.conf"
+      default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
