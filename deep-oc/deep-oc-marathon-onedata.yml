@@ -21,9 +21,7 @@ topology_template:
       type: string
       description: equivalent of --privileged docker flag
       required: yes
-      default: "false"
-      constraints:
-      - valid_values: [ "false", "true" ]
+      default: false
 
     mem_size:
       type: string
