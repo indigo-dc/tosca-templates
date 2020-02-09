@@ -6,7 +6,7 @@ description: >
             A general template to start a deployment on Marathon with access to OneData spaces.
 
 metadata:
-  display_name: General template for starting a job
+  display_name: General template for starting a job and use OneData
   tag: CPU/GPU
 
 topology_template:
