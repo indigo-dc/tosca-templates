@@ -22,6 +22,8 @@ topology_template:
       description: equivalent of --privileged docker flag
       required: yes
       default: false
+      constraints:
+      - valid_values: [ false, true ]
 
     mem_size:
       type: string
@@ -56,7 +58,7 @@ topology_template:
 
     oneclient_provider:
       type: string
-      description: OneData default provider
+      description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
       required: no
       default: "oprov.ifca.es"
 
@@ -66,11 +68,6 @@ topology_template:
       required: no
       default: "/mnt/onedata"
 
-    app_in_out_base_dir:
-      type: string
-      description: base directory for input and output data (e.g. training data, models)
-      required: no
-
     rclone_conf:
       type: string
       description: rclone.conf location
@@ -79,7 +76,7 @@ topology_template:
 
     rclone_url:
       type: string
-      description: remote storage link to access via webdav
+      description: remote storage link to connect to using webdav
       required: no
       default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
@@ -101,6 +98,18 @@ topology_template:
       required: no
       default: ""
 
+    rclone_remote_path:
+      type: string
+      description: remote path to mount via rclone and fuse (experimental!)
+      required: no
+      default: "rshare:/"
+
+    rclone_mount:
+      type: string
+      description: Local mount point for the remote path mounted with rclone
+      required: no
+      default: "/mnt/rclone"
+
     jupyter_password:
       type: string
       description: jupyter password
@@ -113,11 +122,16 @@ topology_template:
       required: no
       default: ""
 
+    app_in_out_base_dir:
+      type: string
+      description: base directory for input and output data (e.g. training data, models)
+      required: no
+
     run_command:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
+      default: "/srv/deep-start"
 
   node_templates:
     Docker:
@@ -150,16 +164,18 @@ topology_template:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
           ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
-          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_RSHARE_TYPE: webdav
           RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
           RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
           RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
+          RCLONE_REMOTE_PATH: { get_input: rclone_remote_path }
+          RCLONE_MOUNT_POINT: { get_input: rclone_mount }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
+          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
         labels:
           HAPROXY_GROUP: "external"
         privileged: { get_input: docker_privileged }
