@@ -14,12 +14,12 @@ topology_template:
 
     docker_image:
       type: string
-      description: docker image from Docker Hub to deploy
+      description: Docker image to deploy from Docker Hub
       required: yes
 
     docker_privileged:
       type: string
-      description: equivalent of --privileged docker flag
+      description: Equivalent of --privileged docker flag
       required: yes
       default: false
       constraints:
@@ -45,7 +45,7 @@ topology_template:
 
     flaat_disable:
       type: string
-      description: disable flaat authentication
+      description: Disable flaat authentication
       required: no
       default: "no"
       constraints:
@@ -53,7 +53,7 @@ topology_template:
 
     oneclient_token:
       type: string
-      description: oneclient_access_token to access OneData
+      description: Set ONECLIENT_ACCESS_TOKEN to access OneData
       required: no
 
     oneclient_provider:
@@ -64,7 +64,7 @@ topology_template:
 
     onedata_mount:
       type: string
-      description: Local mount point for OneData spaces
+      description: Local mount point for OneData, ONEDATA_MOUNT_POINT
       required: no
       default: "/mnt/onedata"
 
@@ -76,7 +76,7 @@ topology_template:
 
     rclone_url:
       type: string
-      description: remote storage link to connect to using webdav
+      description: Remote storage link to connect to using webdav and rclone
       required: no
       default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
@@ -100,13 +100,13 @@ topology_template:
 
     rclone_remote_path:
       type: string
-      description: remote path to mount via rclone and fuse (experimental!)
+      description: Remote path to mount via rclone and fuse (experimental!)
       required: no
       default: "rshare:/"
 
     rclone_mount:
       type: string
-      description: Local mount point for the remote path mounted with rclone
+      description: Local mount point for rclone_remote_path mounted with rclone
       required: no
       default: "/mnt/rclone"
 
@@ -118,20 +118,20 @@ topology_template:
 
     jupyter_config_url:
       type: string
-      description: url to download some jupyter config
+      description: url to download jupyter config
       required: no
       default: ""
 
     app_in_out_base_dir:
       type: string
-      description: base directory for input and output data (e.g. training data, models)
+      description: Base directory for input and output data (e.g. training data, models)
       required: no
 
     run_command:
       type: string
-      description: default command to run
+      description: Default command to run
       required: yes
-      default: "/srv/deep-start"
+      default: "deep-start"
 
   node_templates:
     Docker:
