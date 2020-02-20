@@ -35,7 +35,16 @@ topology_template:
       type: string
       default: ubuntu
       description: Operating System distro - valid values ubuntu, centos 
- 
+      constraints:
+      - valid_values: [ "ubuntu", "centos" ]
+
+    os_version:
+      type: version
+      default: 16.04
+      description: Operating System distribution version
+      constraints:
+      - valid_values: [ "16.04", "7" ]
+
     zabbix_server:
       type: string
       description: IP or DNS name of the Zabbix server
@@ -71,7 +80,7 @@ topology_template:
           properties:
             #image: ubuntu-16.04
             distribution: { get_input: os_distribution }
-            #type: linux
+            version: { get_input: os_version }
 
   outputs:
     node_ip:
