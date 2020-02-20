@@ -82,11 +82,11 @@ topology_template:
         command: 'deepaas-run --listen-ip 0.0.0.0 --listen-port=$PORT0'
         environment_variables:
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_NCPLANTS_TYPE: webdav
-          RCLONE_CONFIG_NCPLANTS_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_NCPLANTS_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_NCPLANTS_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_NCPLANTS_PASS: { get_input: rclone_password }
+          RCLONE_CONFIG_RSHARE_TYPE: webdav
+          RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
       requirements:
       - host:
           node: 'Docker'
