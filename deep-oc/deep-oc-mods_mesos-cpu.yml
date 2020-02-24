@@ -123,7 +123,7 @@ topology_template:
       type: string
       description: default command to run
       required: yes
-      default: "deep-start"
+      default: "deep-start -do"
 
   node_templates:
     Docker:
