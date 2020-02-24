@@ -38,7 +38,9 @@ topology_template:
       type: string
       description: disable flaat authentication
       required: no
-      default: "yes"
+      default: true
+      constraints:
+      - valid_values: [ false, true ]
 
     oneclient_token:
       type: string
