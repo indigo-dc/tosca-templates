@@ -18,7 +18,7 @@ topology_template:
       type: string
       description: Equivalent of --privileged docker flag
       required: yes
-      default: false
+      default: true
       constraints:
       - valid_values: [ false, true ]
 
