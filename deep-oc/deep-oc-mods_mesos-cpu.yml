@@ -117,6 +117,7 @@ topology_template:
       type: string
       description: Base directory for input and output data (e.g. training data, models)
       required: no
+      default: "/mnt/onedata/mods"
 
     run_command:
       type: string
