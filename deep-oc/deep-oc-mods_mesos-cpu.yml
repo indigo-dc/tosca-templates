@@ -4,7 +4,7 @@ imports:
 
 description: >
             Analyzes online data streams in order to generate alerts with time-bounded constrains and in real-time. 
-            More info at https://marketplace.deep-hybrid-datacloud.eu/modules/deep-oc-massive-online-data-streams.html 
+            More info at https://marketplace.deep-hybrid-datacloud.eu/modules/deep-oc-mods.html 
 
 metadata:
   display_name: Massive Online Data Streams
