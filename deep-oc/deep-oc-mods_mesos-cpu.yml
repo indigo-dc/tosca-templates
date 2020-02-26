@@ -18,7 +18,7 @@ topology_template:
       type: string
       description: Equivalent of --privileged docker flag
       required: yes
-      default: false
+      default: true
       constraints:
       - valid_values: [ false, true ]
 
@@ -38,7 +38,9 @@ topology_template:
       type: string
       description: disable flaat authentication
       required: no
-      default: "yes"
+      default: true
+      constraints:
+      - valid_values: [ false, true ]
 
     oneclient_token:
       type: string
@@ -115,12 +117,13 @@ topology_template:
       type: string
       description: Base directory for input and output data (e.g. training data, models)
       required: no
+      default: "/mnt/onedata/mods"
 
     run_command:
       type: string
       description: default command to run
       required: yes
-      default: "deep-start"
+      default: "deep-start -do"
 
   node_templates:
     Docker:

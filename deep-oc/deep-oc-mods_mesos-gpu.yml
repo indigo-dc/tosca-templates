@@ -14,6 +14,14 @@ metadata:
 topology_template:
   inputs:
 
+    docker_privileged:
+      type: string
+      description: Equivalent of --privileged docker flag
+      required: yes
+      default: true
+      constraints:
+      - valid_values: [ false, true ]
+
     mem_size:
       type: string
       description: Amount of memory
@@ -36,17 +44,36 @@ topology_template:
       type: string
       description: disable flaat authentication
       required: no
-      default: "yes"
+      default: true
+      constraints:
+      - valid_values: [ false, true ]
+
+    oneclient_token:
+      type: string
+      description: Set ONECLIENT_ACCESS_TOKEN to access OneData
+      required: no
+
+    oneclient_provider:
+      type: string
+      description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
+      required: no
+      default: "oprov.ifca.es"
+
+    onedata_mount:
+      type: string
+      description: Local mount point for OneData, ONEDATA_MOUNT_POINT
+      required: no
+      default: "/mnt/onedata"
 
     rclone_conf:
       type: string
       description: rclone.conf location
       required: no
-      default: "/srv/mods/.rclone.conf"
+      default: "/srv/.rclone/rclone.conf"
 
     rclone_url:
       type: string
-      description: remote storage link to access via webdav
+      description: Remote storage link to connect to using webdav and rclone
       required: no
       default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
@@ -55,7 +82,7 @@ topology_template:
       description: rclone vendor
       required: no
       default: "nextcloud"
-  
+
     rclone_user:
       type: string
       description: rclone user to access remote storage
@@ -68,17 +95,17 @@ topology_template:
       required: no
       default: ""
 
-    oneclient_provider_host:
+    rclone_remote_path:
       type: string
-      description: oneclient provider host
+      description: Remote path to mount via rclone and fuse (experimental!)
       required: no
-      default: ""
+      default: "rshare:/"
 
-    oneclient_access_token:
+    rclone_mount:
       type: string
-      description: oneclient access token
+      description: Local mount point for rclone_remote_path mounted with rclone
       required: no
-      default: ""
+      default: "/mnt/rclone"
 
     jupyter_password:
       type: string
@@ -92,11 +119,17 @@ topology_template:
       required: no
       default: ""
 
+    app_in_out_base_dir:
+      type: string
+      description: Base directory for input and output data (e.g. training data, models)
+      required: no
+      default: "/mnt/onedata/mods"
+
     run_command:
       type: string
       description: default command to run
       required: yes
-      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=$PORT0"
+      default: "deep-start -do"
 
   node_templates:
     Docker:
@@ -107,7 +140,7 @@ topology_template:
             publish_all: false
             publish_ports:
             - protocol: "tcp"
-              source: 5000 
+              source: 5000
             - protocol: "tcp"
               source: 6006
             - protocol: "tcp"
@@ -126,17 +159,24 @@ topology_template:
         force_pull_image: true
         command: { get_input: run_command }
         environment_variables:
+          ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
+          ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
+          ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
           RCLONE_CONFIG: { get_input: rclone_conf }
-          RCLONE_CONFIG_DEEPNC_TYPE: webdav
-          RCLONE_CONFIG_DEEPNC_URL: { get_input: rclone_url }
-          RCLONE_CONFIG_DEEPNC_VENDOR: { get_input: rclone_vendor }
-          RCLONE_CONFIG_DEEPNC_USER: { get_input: rclone_user }
-          RCLONE_CONFIG_DEEPNC_PASS: { get_input: rclone_password }
-          ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider_host }
-          ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_access_token }
+          RCLONE_CONFIG_RSHARE_TYPE: webdav
+          RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
+          RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
+          RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
+          RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
+          RCLONE_REMOTE_PATH: { get_input: rclone_remote_path }
+          RCLONE_MOUNT_POINT: { get_input: rclone_mount }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
           jupyterCONFIG_URL: {get_input: jupyter_config_url}
+          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
+        labels:
+          HAPROXY_GROUP: "external"
+        privileged: { get_input: docker_privileged }
       requirements:
       - host:
           node: "Docker"
