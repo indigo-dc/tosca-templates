@@ -15,7 +15,7 @@ topology_template:
   inputs:
 
     docker_privileged:
-      type: string
+      type: boolean
       description: Equivalent of --privileged docker flag
       required: yes
       default: true
@@ -35,9 +35,9 @@ topology_template:
       default: 1
 
     flaat_disable:
-      type: string
+      type: boolean
       description: disable flaat authentication
-      required: no
+      required: yes
       default: true
       constraints:
       - valid_values: [ false, true ]
