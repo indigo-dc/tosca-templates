@@ -15,12 +15,12 @@ topology_template:
   inputs:
 
     docker_privileged:
-      type: boolean
+      type: string
       description: Equivalent of --privileged docker flag
       required: yes
-      default: true
+      default: "true"
       constraints:
-      - valid_values: [ false, true ]
+      - valid_values: [ "false", "true" ]
 
     mem_size:
       type: string
@@ -35,12 +35,12 @@ topology_template:
       default: 1
 
     flaat_disable:
-      type: boolean
+      type: string
       description: disable flaat authentication
       required: yes
-      default: true
+      default: "true"
       constraints:
-      - valid_values: [ false, true ]
+      - valid_values: [ "false", "true" ]
 
     oneclient_token:
       type: string
