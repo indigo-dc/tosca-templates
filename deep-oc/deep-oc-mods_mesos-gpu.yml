@@ -140,9 +140,9 @@ topology_template:
             publish_all: false
             publish_ports:
             - protocol: "tcp"
-              source: PORT0
+              source: 5000
             - protocol: "tcp"
-              source: PORT1
+              source: 6006
             - protocol: "tcp"
               source: 8888
             mem_size: { get_input: mem_size }
