@@ -6,7 +6,7 @@ description: >
             A general template (https) to start a deployment on Marathon with access to a remote Webdav storage.
 
 metadata:
-  display_name: General template for starting a job
+  display_name: General template for starting a job (https)
   tag: CPU/GPU
 
 topology_template:
