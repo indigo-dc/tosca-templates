@@ -1,0 +1,109 @@
+
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+
+description: TOSCA examples for specifying a Chronos Job that runs an application using Onedata storage.
+
+topology_template:
+  inputs:
+
+    onedata_provider:
+      type: string
+      description: Onedata provider to be used to mount the space. 
+      required: yes
+    
+    onedata_zone:
+      type: string
+      description: Onezone URL
+      required: yes
+      
+    sat_space_name:
+      type: string
+      description: Onedata space where the model is stored
+      required: yes
+    
+    start_date:
+      type: string
+      description: start date for searching data
+      default: ''
+      required: yes
+      
+    end_date:
+      type: string
+      description: end date for searching data
+      default: ''
+      required: yes
+      
+    region:
+      type: string
+      description: Region to take the data from
+      default: ''
+      required: yes
+      
+    sat_args:
+      type: string
+      description: JSON with input
+      default: ''
+      required: yes
+
+    cpus:
+      type: float
+      description: Amount of CPUs for this job
+      required: yes
+    
+    mem:
+      type: scalar-unit.size
+      description: Amount of Memory for this job
+      required: yes 
+ 
+  node_templates:
+ 
+   
+    chronos_job1:
+      type: tosca.nodes.indigo.Container.Application.Docker.Chronos
+      properties:
+        description: 'Execute Application'
+        command: 'curl -O https://raw.githubusercontent.com/IFCA/Dockerfile_sat/master/job.sh && /bin/bash job.sh>"$REGION"_"$START_DATE"_"$END_DATE".stderr 2>&1 && mv "$REGION"_"$START_DATE"_"$END_DATE".stderr /onedata/output/"$ONEDATA_SPACE"/logs/'
+        uris: []
+        retries: 3
+        environment_variables:
+        
+          INPUT_ONEDATA_TOKEN: { get_attribute : [ input_onedata_space, token ] }
+          ONEDATA_PROVIDERS: { get_input : onedata_provider }
+          ONEDATA_SPACE: { get_input: sat_space_name }
+          START_DATE: { get_input: start_date}
+          END_DATE: { get_input: end_date}
+          REGION: { get_input: region}
+          SAT_ARGS: { get_input: sat_args}
+      artifacts:
+        image:
+          file: 'garciadd/xdc_lfw_sat' 
+          type: tosca.artifacts.Deployment.Image.Container.Docker
+      requirements:
+        - host: docker_runtime
+   
+   
+    docker_runtime:
+      type: tosca.nodes.indigo.Container.Runtime.Docker
+      capabilities:
+        host:
+          properties:
+            num_cpus: { get_input: cpus }
+            mem_size: { get_input: mem }
+            volumes: [ '/data:rw' ]
+
+
+    input_onedata_space:
+      type: tosca.nodes.indigo.OnedataSpace
+      properties:
+        onezone: { get_input: onedata_zone }
+        space: { get_input: sat_space_name }
+        
+
+    output_onedata_space:
+      type: tosca.nodes.indigo.OnedataSpace
+      properties:
+        onezone: { get_input: onedata_zone }
+        space: { get_input: sat_space_name }
