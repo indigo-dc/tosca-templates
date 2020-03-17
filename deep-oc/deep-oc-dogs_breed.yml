@@ -1,12 +1,12 @@
 tosca_definitions_version: "tosca_simple_yaml_1_0"
 imports:
-- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/stable/v4.0.1/custom_types.yaml"
 
 description: This application applies Transfer learning for dog's breed identification, which is implemented by means of Tensorflow and Keras
 
 metadata:
   display_name: Dogs breed detection
-  icon: https://github.com/indigo-dc/tosca-templates/raw/master/deep-oc/images/dogs_breed_detection_module.png
+  icon: https://github.com/indigo-dc/tosca-templates/raw/stable/v4.0.1/deep-oc/images/dogs_breed_detection_module.png
   tag: CPU/GPU
 
 topology_template:
