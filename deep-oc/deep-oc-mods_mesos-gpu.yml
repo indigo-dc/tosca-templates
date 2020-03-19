@@ -57,7 +57,7 @@ topology_template:
       type: string
       description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
       required: no
-      default: "oprov.ifca.es"
+      default: "cloud-90-147-75-163.cloud.ba.infn.it"
 
     onedata_mount:
       type: string
@@ -158,6 +158,7 @@ topology_template:
       properties:
         force_pull_image: true
         command: { get_input: run_command }
+        enable_https: true
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
