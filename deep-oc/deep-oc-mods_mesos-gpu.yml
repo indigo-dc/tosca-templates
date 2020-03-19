@@ -40,6 +40,14 @@ topology_template:
       required: no
       default: 1
 
+    enable_https:
+      type: string
+      description: enable HTTPS
+      required: no
+      default: false
+      constraints:
+      - valid_values: [ false, true ]
+
     flaat_disable:
       type: string
       description: disable flaat authentication
@@ -158,7 +166,7 @@ topology_template:
       properties:
         force_pull_image: true
         command: { get_input: run_command }
-        enable_https: true
+        enable_https: { get_input: enable_https }
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
