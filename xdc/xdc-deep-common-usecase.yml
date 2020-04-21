@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
+  - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
             A general template to deploy a Docker container with jupyter lab and access to OneData spaces.
@@ -41,10 +41,10 @@ topology_template:
       type: string
       description: Onedata space where the model is stored
       required: yes
-      default: XDC_LifeWatch
+      default: "XDC_LifeWatch"
 
-    cpus:
-      type: float
+    num_cpus:
+      type: integer
       description: Amount of CPUs for this job
       required: yes
       default: 4
@@ -55,9 +55,9 @@ topology_template:
       required: no
       default: 0
     
-    mem:
-      type: scalar-unit.size
-      description: Amount of Memory for this job
+    mem_size:
+      type: string
+      description: Amount of Memory
       required: yes
       default: "32768 MB" 
 
@@ -91,8 +91,8 @@ topology_template:
           force_pull_image: true
           command: { get_input: run_command }
           environment_variables:
-            ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
-            ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
+            ONECLIENT_ACCESS_TOKEN: { get_input: onedata_token }
+            ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
             ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
           labels:
             HAPROXY_GROUP: "external"
