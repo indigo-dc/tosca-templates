@@ -31,7 +31,7 @@ topology_template:
       description: Onedata token to to access OneData.
       required: yes
 
-     onedata_mount:
+    onedata_mount:
       type: string
       description: Local mount point for OneData, ONEDATA_MOUNT_POINT
       required: no
