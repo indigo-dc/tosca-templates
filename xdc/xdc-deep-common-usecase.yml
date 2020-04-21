@@ -107,13 +107,13 @@ topology_template:
             file: { get_input: docker_image }
             type: "tosca.artifacts.Deployment.Image.Container.Docker"
     outputs:
-    Docker_image:
-      value: { get_input: docker_image }
-    Docker_num_cpus:
-      value: { get_input: num_cpus }
-    Docker_num_gpus:
-      value: { get_input: num_gpus }
-    command:
-      value: { get_input: run_command }
-    jupyter_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+      Docker_image:
+        value: { get_input: docker_image }
+      Docker_num_cpus:
+        value: { get_input: num_cpus }
+      Docker_num_gpus:
+        value: { get_input: num_gpus }
+      command:
+        value: { get_input: run_command }
+      jupyter_endpoint:
+        value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
