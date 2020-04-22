@@ -132,6 +132,12 @@ topology_template:
       required: no
       default: "/mnt/onedata/mods"
 
+    app_experiment_namespace:
+      type: string
+      description: Namespace for the experiment to group trainings, models, model checkpoints, cache and monitoring data
+      required: no
+      default: "_default_"
+
     run_command:
       type: string
       description: default command to run
@@ -182,6 +188,7 @@ topology_template:
           jupyterPASSWORD: { get_input: jupyter_password }
           jupyterCONFIG_URL: { get_input: jupyter_config_url }
           APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
+          APP_EXPERIMENT_NAMESPACE: { get_input: app_experiment_namespace }
         labels:
           HAPROXY_GROUP: "external"
         privileged: { get_input: docker_privileged }
