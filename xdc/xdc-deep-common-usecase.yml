@@ -1,10 +1,12 @@
-tosca_definitions_version: tosca_simple_yaml_1_0
-
+tosca_definitions_version: "tosca_simple_yaml_1_0"
 imports:
-  - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
+- indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
             A general template to deploy a Docker container with jupyter lab and access to OneData spaces.
+
+metadata:
+  display_name: General template with jupyter lab and OneData spaces
 
 topology_template:
   inputs:
@@ -17,35 +19,18 @@ topology_template:
     docker_privileged:
       type: string
       description: equivalent of --privileged docker flag
-      required: no
+      required: yes
       default: true
 
-    onedata_provider:
+    mem_size:
       type: string
-      description: Onedata provider to be used to mount the space. 
+      description: Amount of memory
       required: yes
-      default: "vm027.pub.cloud.ifca.es"
-
-    onedata_token:
-      type: string
-      description: Onedata token to to access OneData.
-      required: yes
-
-    onedata_mount:
-      type: string
-      description: Local mount point for OneData, ONEDATA_MOUNT_POINT
-      required: no
-      default: "/mnt/onedata"
-      
-    onedata_space:
-      type: string
-      description: Onedata space where the model is stored
-      required: yes
-      default: "XDC_LifeWatch"
+      default: "32768 MB"
 
     num_cpus:
       type: integer
-      description: Amount of CPUs for this job
+      description: Number of required CPUs
       required: yes
       default: 4
 
@@ -54,19 +39,36 @@ topology_template:
       description: Number of required GPUs
       required: no
       default: 0
-    
-    mem_size:
+
+    onedata_provider:
       type: string
-      description: Amount of Memory
+      description: Onedata provider to be used to mount the space.
       required: yes
-      default: "32768 MB" 
+      default: "vm027.pub.cloud.ifca.es"
+
+    onedata_token:
+      type: string
+      description: Onedata token to to access OneData
+      required: yes
+
+    onedata_mount:
+      type: string
+      description: Local mount point for OneData
+      required: no
+      default: "/mnt/onedata"
+
+    onedata_space:
+      type: string
+      description: Onedata space where the model is stored
+      required: yes
+      default: "XDC_LifeWatch"
 
     run_command:
       type: string
       description: default command to run
       required: yes
       default: "/srv/.jupyter/run_jupyter.sh --allow-root"
- 
+
   node_templates:
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
@@ -85,35 +87,35 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
-      marathon:
-        type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
-        properties:
-          force_pull_image: true
-          command: { get_input: run_command }
-          environment_variables:
-            ONECLIENT_ACCESS_TOKEN: { get_input: onedata_token }
-            ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
-            ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
-          labels:
-            HAPROXY_GROUP: "external"
-          privileged: { get_input: docker_privileged }
-        requirements:
-        - host:
-            node: "Docker"
-            capability: "tosca.capabilities.indigo.Container.Docker"
-            relationship: "tosca.relationships.HostedOn"
-        artifacts:
-          image:
-            file: { get_input: docker_image }
-            type: "tosca.artifacts.Deployment.Image.Container.Docker"
-    outputs:
-      Docker_image:
-        value: { get_input: docker_image }
-      Docker_num_cpus:
-        value: { get_input: num_cpus }
-      Docker_num_gpus:
-        value: { get_input: num_gpus }
-      command:
-        value: { get_input: run_command }
-      jupyter_endpoint:
-        value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+    marathon:
+      type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
+      properties:
+        force_pull_image: true
+        command: { get_input: run_command }
+        environment_variables:
+          ONECLIENT_ACCESS_TOKEN: { get_input: onedata_token }
+          ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
+          ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
+        labels:
+          HAPROXY_GROUP: "external"
+        privileged: { get_input: docker_privileged }
+      requirements:
+      - host:
+          node: "Docker"
+          capability: "tosca.capabilities.indigo.Container.Docker"
+          relationship: "tosca.relationships.HostedOn"
+      artifacts:
+        image:
+          file: { get_input: docker_image }
+          type: "tosca.artifacts.Deployment.Image.Container.Docker"
+  outputs:
+    Docker_image:
+      value: { get_input: docker_image }
+    Docker_num_cpus:
+      value: { get_input: num_cpus }
+    Docker_num_gpus:
+      value: { get_input: num_gpus }
+    command:
+      value: { get_input: run_command }
+    jupyter_endpoint:
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
