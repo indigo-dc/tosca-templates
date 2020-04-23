@@ -101,6 +101,7 @@ topology_template:
           ONECLIENT_ACCESS_TOKEN: { get_input: onedata_token }
           ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
           ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
+          jupyterPASSWORD: { get_input: jupyter_password }
         labels:
           HAPROXY_GROUP: "external"
         privileged: { get_input: docker_privileged }
