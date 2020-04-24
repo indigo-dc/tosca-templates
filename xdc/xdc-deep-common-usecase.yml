@@ -6,7 +6,7 @@ description: >
             A general template to deploy a Docker container with jupyter lab and access to OneData spaces.
 
 metadata:
-  display_name: General template with jupyter lab and OneData spaces
+  display_name: XDC & Deep common Use Case
 
 topology_template:
   inputs:
@@ -63,6 +63,11 @@ topology_template:
       required: yes
       default: "XDC_LifeWatch"
 
+    jupyter_password:
+      type: string
+      description: Password for JupyterLab. Should have at least 9 characters.
+      required: yes
+
     run_command:
       type: string
       description: default command to run
@@ -96,6 +101,7 @@ topology_template:
           ONECLIENT_ACCESS_TOKEN: { get_input: onedata_token }
           ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
           ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
+          jupyterPASSWORD: { get_input: jupyter_password }
         labels:
           HAPROXY_GROUP: "external"
         privileged: { get_input: docker_privileged }
