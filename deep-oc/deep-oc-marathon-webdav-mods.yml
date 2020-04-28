@@ -56,6 +56,14 @@ topology_template:
       constraints:
       - valid_values: [ "yes", "no" ]
 
+    enable_https:
+      type: string
+      description: Enable HTTPS connection
+      required: no
+      default: "no"
+      constraints:
+      - valid_values: [ "yes", "no" ]
+
     oneclient_token:
       type: string
       description: Set ONECLIENT_ACCESS_TOKEN to access OneData
@@ -166,6 +174,7 @@ topology_template:
       properties:
         force_pull_image: true
         command: { get_input: run_command }
+        enable_https: { get_input: enable_https }
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
