@@ -16,7 +16,7 @@ topology_template:
 
     docker_image:
       type: string
-      description: docker image from Docker Hub to deploy
+      description: Docker image to deploy from Docker Hub
       required: yes
       default: "deephdc/deep-oc-mods:gpu"
       constraints:
@@ -44,16 +44,17 @@ topology_template:
 
     num_gpus:
       type: integer
-      description: Number of required GPUs. For a CPU deployment provide 0 here
-      required: yes
+      description: Number of required GPUs
+      required: no
+      default: 0
 
     flaat_disable:
       type: string
-      description: disable flaat authentication
+      description: Disable flaat authentication
       required: no
-      default: "no"
+      default: "yes"
       constraints:
-      - valid_values: [ "no", "yes" ]
+      - valid_values: [ "yes", "no" ]
 
     oneclient_token:
       type: string
@@ -64,7 +65,7 @@ topology_template:
       type: string
       description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
       required: no
-      default: "cloud-90-147-75-163.cloud.ba.infn.it"
+      default: "oprov.ifca.es"
 
     onedata_mount:
       type: string
@@ -80,19 +81,19 @@ topology_template:
 
     rclone_url:
       type: string
-      description: Remote storage link to connect to using webdav and rclone
+      description: Remote storage link to be accessed via rclone (webdav)
       required: no
       default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
     rclone_vendor:
       type: string
-      description: rclone vendor
+      description: rclone vendor (webdav)
       required: no
       default: "nextcloud"
 
     rclone_user:
       type: string
-      description: rclone user to access remote storage
+      description: rclone user to access a webdav remote storage
       required: no
       default: ""
 
@@ -110,19 +111,13 @@ topology_template:
 
     rclone_mount:
       type: string
-      description: Local mount point for rclone_remote_path mounted with rclone
+      description: Local mount point for rclone_remote_path mounted with rclone (experimental!)
       required: no
       default: "/mnt/rclone"
 
     jupyter_password:
       type: string
-      description: jupyter password
-      required: no
-      default: ""
-
-    jupyter_config_url:
-      type: string
-      description: url to download some jupyter config
+      description: Password for JupyterLab. Should have at least 9 characters.
       required: no
       default: ""
 
@@ -140,9 +135,9 @@ topology_template:
 
     run_command:
       type: string
-      description: default command to run
+      description: Default command to run
       required: yes
-      default: "deep-start -do"
+      default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
     Docker:
@@ -171,7 +166,6 @@ topology_template:
       properties:
         force_pull_image: true
         command: { get_input: run_command }
-        enable_https: true
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
@@ -186,7 +180,6 @@ topology_template:
           RCLONE_MOUNT_POINT: { get_input: rclone_mount }
           DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: { get_input: flaat_disable }
           jupyterPASSWORD: { get_input: jupyter_password }
-          jupyterCONFIG_URL: { get_input: jupyter_config_url }
           APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
           APP_EXPERIMENT_NAMESPACE: { get_input: app_experiment_namespace }
         labels:
