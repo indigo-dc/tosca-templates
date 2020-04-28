@@ -56,14 +56,6 @@ topology_template:
       constraints:
       - valid_values: [ "yes", "no" ]
 
-    enable_https:
-      type: string
-      description: Enable HTTPS connection
-      required: no
-      default: "no"
-      constraints:
-      - valid_values: [ "yes", "no" ]
-
     oneclient_token:
       type: string
       description: Set ONECLIENT_ACCESS_TOKEN to access OneData
@@ -174,7 +166,7 @@ topology_template:
       properties:
         force_pull_image: true
         command: { get_input: run_command }
-        enable_https: { get_input: enable_https }
+        enable_https: true
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
@@ -213,8 +205,8 @@ topology_template:
     command:
       value: { get_input: run_command }
     deepaas_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] }, '/ui' ] }
     monitor_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
     jupyter_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
