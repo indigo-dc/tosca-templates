@@ -160,7 +160,7 @@ topology_template:
         enable_https: true
         environment_variables:
           ONECLIENT_ACCESS_TOKEN: { get_attribute : [ onedata_space, token ] }
-          ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
+          ONECLIENT_PROVIDER_HOST: { get_input: onedata_provider }
           ONEDATA_MOUNT_POINT: { get_input: onedata_mount_point }
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_RSHARE_TYPE: webdav
