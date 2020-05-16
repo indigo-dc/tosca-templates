@@ -51,16 +51,22 @@ topology_template:
       constraints:
       - valid_values: [ "no", "yes" ]
 
-    oneclient_token:
+    onedata_zone:
       type: string
-      description: Set ONECLIENT_ACCESS_TOKEN to access OneData
+      description: OneData zone (e.g. https://onezone.cloud.cnaf.infn.it; https://onezone-beta.cloud.ba.infn.it)
       required: no
+      default: "https://onezone.cloud.cnaf.infn.it"
 
-    oneclient_provider:
+    onedata_provider:
       type: string
-      description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
+      description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it; oneprovider-beta-2.cloud.ba.infn.it)
       required: no
       default: "oprov.ifca.es"
+
+    onedata_space_name:
+      type: string
+      description: Name of OneData space
+      required: no
 
     onedata_mount:
       type: string
@@ -116,6 +122,14 @@ topology_template:
       default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
+
+    onedata_space:
+      type: tosca.nodes.indigo.OnedataSpace
+      properties:
+        onezone: { get_input: onedata_zone }
+        space: { get_input: onedata_space_name }
+        oneproviders: [ { get_input: onedata_provider } ]
+
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
       capabilities:
@@ -137,6 +151,7 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+
     marathon:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
@@ -144,9 +159,9 @@ topology_template:
         command: { get_input: run_command }
         enable_https: true
         environment_variables:
-          ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
+          ONECLIENT_ACCESS_TOKEN: { get_attribute : [ onedata_space, token ] }
           ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
-          ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
+          ONEDATA_MOUNT_POINT: { get_input: onedata_mount_point }
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_RSHARE_TYPE: webdav
           RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
