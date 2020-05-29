@@ -1,13 +1,14 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
-  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/qcg_integration/custom_types.yaml
+  - indigo_custom_types: https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml
 
 
 description: Submit a DEEP-OC job to HPC batch cluster (using QCG gateway)
 
 metadata:
   display_name: DEEP HPC Job
+  icon: https://github.com/indigo-dc/tosca-types/raw/master/images/qcg-logo.png
   tag: hpc
 
 topology_template:
@@ -17,7 +18,7 @@ topology_template:
     docker_image:
       type: string
       description: Docker image to deploy from Docker Hub
-      default: deephdc/deep-oc-dogs_breed_det:cpu
+      default: deephdc/deep-oc-benchmarks_cnn:cpu
       required: no
     run_command:
       type: string
@@ -100,6 +101,11 @@ topology_template:
       description: Name of the HPC partition (e.g. standard, tesla)
       required: no
       default: standard
+    schedule_extra_option:
+      type: string
+      description: extra option for the batch system
+      required: no
+      default: "--reservation=deep"
 #    wall_clock:
 #      type: string
 #      required: no
@@ -126,6 +132,7 @@ topology_template:
         cores_per_node: { get_input: cores_per_node }
         gpus: { get_input: num_gpus }
         queue: { get_input: queue }
+        batch_system_options: [ { get_input: schedule_extra_option } ]
         #wall_clock: { get_input: wall_clock }
         environment:
           DOCKER_IMAGE: { get_input: docker_image }
