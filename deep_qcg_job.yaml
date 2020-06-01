@@ -101,11 +101,13 @@ topology_template:
       description: Name of the HPC partition (e.g. standard, tesla)
       required: no
       default: standard
-    schedule_extra_option:
-      type: string
-      description: extra option for the batch system
+    schedule_extra_options:
+      type: list
+      entry_schema:
+        type: string
+      description: extra options for the batch system
       required: no
-      default: "--reservation=deep"
+      default: []
 #    wall_clock:
 #      type: string
 #      required: no
@@ -132,7 +134,7 @@ topology_template:
         cores_per_node: { get_input: cores_per_node }
         gpus: { get_input: num_gpus }
         queue: { get_input: queue }
-        batch_system_options: [ { get_input: schedule_extra_option } ]
+        batch_system_options: { get_input: schedule_extra_options } 
         #wall_clock: { get_input: wall_clock }
         environment:
           DOCKER_IMAGE: { get_input: docker_image }
