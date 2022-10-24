@@ -3,10 +3,10 @@ imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
-            A minimal template to start a deployment on Marathon (no webdav/onedata access).
+  A template for deploying a DEEP OC module on top of Marathon without access to a remote Webdav storage.
 
 metadata:
-  display_name: Minimal template for starting a job
+  display_name: Minimal template to deploy a DEEP OC Application
   tag: CPU/GPU
 
 topology_template:
@@ -14,7 +14,7 @@ topology_template:
 
     docker_image:
       type: string
-      description: Docker image to deploy from Docker Hub 
+      description: Docker image to deploy from Docker Hub
       required: yes
 
     docker_privileged:
@@ -24,6 +24,8 @@ topology_template:
       default: false
       constraints:
       - valid_values: [ false, true ]
+
+    # Hardware options
 
     mem_size:
       type: string
@@ -43,6 +45,8 @@ topology_template:
       required: no
       default: 0
 
+    # DEEP services
+
     jupyter_password:
       type: string
       description: Password for JupyterLab. Should have at least 9 characters.
@@ -56,6 +60,7 @@ topology_template:
       default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
+
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
       capabilities:
@@ -77,11 +82,13 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+
     marathon:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
         force_pull_image: true
         command: { get_input: run_command }
+        enable_https: true
         environment_variables:
           jupyterPASSWORD: {get_input: jupyter_password}
         labels:
@@ -96,6 +103,7 @@ topology_template:
         image:
           file: { get_input: docker_image }
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
+
   outputs:
     Docker_image:
       value: { get_input: docker_image }
@@ -106,8 +114,8 @@ topology_template:
     command:
       value: { get_input: run_command }
     deepaas_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
     jupyter_endpoint:
-      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
+      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
