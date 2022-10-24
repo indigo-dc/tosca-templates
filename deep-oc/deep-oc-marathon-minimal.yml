@@ -3,7 +3,7 @@ imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
-  A template for deploying a DEEP OC module on top of Marathon without access to a remote Webdav storage.
+  A template for deploying a DEEP OC module on top of Marathon *without* access to a remote Webdav storage.
 
 metadata:
   display_name: Minimal template to deploy a DEEP OC Application

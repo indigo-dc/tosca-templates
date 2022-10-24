@@ -3,10 +3,10 @@ imports:
 - indigo_custom_types: "https://raw.githubusercontent.com/indigo-dc/tosca-types/master/custom_types.yaml"
 
 description: >
-  A template for deploying a DEEP OC module on top of Marathon with access to a remote Webdav storage.
+            A general template to start a deployment on Marathon with the access to a remote Webdav and/or Onedata storage.
 
 metadata:
-  display_name: General template to deploy a DEEP OC Application
+  display_name: General template for starting a job
   tag: CPU/GPU
 
 topology_template:
@@ -14,7 +14,7 @@ topology_template:
 
     docker_image:
       type: string
-      description: Docker image to deploy from Docker Hub
+      description: Docker image to deploy from Docker Hub 
       required: yes
 
     docker_privileged:
@@ -24,8 +24,6 @@ topology_template:
       default: false
       constraints:
       - valid_values: [ false, true ]
-
-    # Hardware options
 
     mem_size:
       type: string
@@ -45,7 +43,30 @@ topology_template:
       required: no
       default: 0
 
-    # Storage options
+    flaat_disable:
+      type: string
+      description: Disable flaat authentication
+      required: no
+      default: "no"
+      constraints:
+      - valid_values: [ "no", "yes" ]
+
+    oneclient_token:
+      type: string
+      description: Set ONECLIENT_ACCESS_TOKEN to access OneData
+      required: no
+
+    oneclient_provider:
+      type: string
+      description: OneData default provider (e.g. oprov.ifca.es, oneprovider.fedcloud.eu, cloud-90-147-75-163.cloud.ba.infn.it)
+      required: no
+      default: "oprov.ifca.es"
+
+    onedata_mount:
+      type: string
+      description: Local mount point for OneData, ONEDATA_MOUNT_POINT
+      required: no
+      default: "/mnt/onedata"
 
     rclone_conf:
       type: string
@@ -57,7 +78,7 @@ topology_template:
       type: string
       description: Remote storage link to be accessed via rclone (webdav)
       required: no
-      default: "https://data-deep.a.incd.pt/remote.php/webdav/"
+      default: "https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 
     rclone_vendor:
       type: string
@@ -77,18 +98,16 @@ topology_template:
       required: no
       default: ""
 
-    app_in_out_base_dir:
-      type: string
-      description: Base directory for input and output data (e.g. training data, models)
-      required: no
-
-    # DEEP services
-
     jupyter_password:
       type: string
       description: Password for JupyterLab. Should have at least 9 characters.
       required: no
       default: ""
+
+    app_in_out_base_dir:
+      type: string
+      description: Base directory for input and output data (e.g. training data, models)
+      required: no
 
     run_command:
       type: string
@@ -97,7 +116,6 @@ topology_template:
       default: "deepaas-run --listen-ip=0.0.0.0 --listen-port=5000"
 
   node_templates:
-
     Docker:
       type: "tosca.nodes.indigo.Container.Runtime.Docker"
       capabilities:
@@ -119,22 +137,24 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
-
     marathon:
       type: "tosca.nodes.indigo.Container.Application.Docker.Marathon"
       properties:
         force_pull_image: true
         command: { get_input: run_command }
-        enable_https: true
         environment_variables:
+          ONECLIENT_ACCESS_TOKEN: { get_input: oneclient_token }
+          ONECLIENT_PROVIDER_HOST: { get_input: oneclient_provider }
+          ONEDATA_MOUNT_POINT: { get_input: onedata_mount }
           RCLONE_CONFIG: { get_input: rclone_conf }
           RCLONE_CONFIG_RSHARE_TYPE: webdav
           RCLONE_CONFIG_RSHARE_URL: { get_input: rclone_url }
           RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
           RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
-          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
+          DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER: {get_input: flaat_disable}
           jupyterPASSWORD: {get_input: jupyter_password}
+          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
         labels:
           HAPROXY_GROUP: "external"
         privileged: { get_input: docker_privileged }
@@ -147,7 +167,6 @@ topology_template:
         image:
           file: { get_input: docker_image }
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
-
   outputs:
     Docker_image:
       value: { get_input: docker_image }
@@ -158,8 +177,8 @@ topology_template:
     command:
       value: { get_input: run_command }
     deepaas_endpoint:
-      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 0, target ] } ] }
     monitor_endpoint:
-      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 1, target ] } ] }
     jupyter_endpoint:
-      value:  { concat: [ 'https://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
+      value:  { concat: [ 'http://', { get_attribute : [ marathon, load_balancer_ips, 0 ] }, ':', { get_attribute : [ Docker, host, publish_ports, 2, target ] } ] }
