@@ -25,6 +25,12 @@ topology_template:
       constraints:
       - valid_values: [ false, true ]
 
+    deployment_description:
+      type: string
+      description: Provide some information about this deployment. Useful when you have lots of different active deployments.
+      required: no
+      default: ""
+
     # Hardware options
 
     mem_size:
@@ -104,6 +110,8 @@ topology_template:
           type: "tosca.artifacts.Deployment.Image.Container.Docker"
 
   outputs:
+    deployment_description:
+      value: { get_input: deployment_description }
     Docker_image:
       value: { get_input: docker_image }
     Docker_num_cpus:
