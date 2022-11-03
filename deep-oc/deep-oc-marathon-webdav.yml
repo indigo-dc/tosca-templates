@@ -83,11 +83,6 @@ topology_template:
       required: no
       default: ""
 
-    app_in_out_base_dir:
-      type: string
-      description: Base directory for input and output data (e.g. training data, models)
-      required: no
-
     # DEEP services
 
     jupyter_password:
@@ -138,7 +133,6 @@ topology_template:
           RCLONE_CONFIG_RSHARE_VENDOR: { get_input: rclone_vendor }
           RCLONE_CONFIG_RSHARE_USER: { get_input: rclone_user }
           RCLONE_CONFIG_RSHARE_PASS: { get_input: rclone_password }
-          APP_INPUT_OUTPUT_BASE_DIR: { get_input: app_in_out_base_dir }
           jupyterPASSWORD: {get_input: jupyter_password}
         labels:
           HAPROXY_GROUP: "external"
