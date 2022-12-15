@@ -87,7 +87,7 @@ topology_template:
 
     jupyter_password:
       type: string
-      description: Password for JupyterLab. Should have at least 9 characters.
+      description: Select a password for JupyterLab. It should have at least 9 characters.
       required: no
       default: ""
 
